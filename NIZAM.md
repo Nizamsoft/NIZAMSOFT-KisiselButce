@@ -32,20 +32,24 @@ Bunlar Nizam Soft standardıdır. Tartışılmaz, değiştirilmez, alternatif
   - Commit başına `[NS-x]` etiketi.
 - **PWA: Var**
   - Ana ekrana eklenebilir. Servis işçisi kabuğu önbelleğe alır, sürüm değişince günceller.
-- **Veri: Supabase**
-  - Postgres + Auth + Realtime + Storage. Satır güvenliği (RLS) her tabloda açık.
-- **Gerçek zamanlı: Her zaman açık**
-  - Başkası bir kaydı değiştirince ekran kendiliğinden tazelenir.
+- **Veri: Tarayıcıda — IndexedDB**
+  - Sunucu yok, hesap yok, veri tarayıcıdan dışarı çıkmaz. Bütün kayıtlar
+    kullanıcının cihazındaki IndexedDB'de durur.
+- **Gerçek zamanlı: Yok**
+  - Tek cihaz, tek kullanıcı. Paylaşılan veri olmadığı için tazelenecek bir şey yok.
 - **Çevrimdışı: Her zaman çalışır**
-  - Okuma yerelden: son görülen veri tarayıcıda durur. Yazma kuyruğa girer,
-    internet gelince gönderilir. Çakışırsa son yazan kazanır ve kullanıcıya söylenir.
+  - Uygulama zaten çevrimdışı çalışır; okuma da yazma da doğrudan cihazdaki
+    veritabanına gider. Kuyruk, eşitleme ve çakışma yoktur.
 - **Değişiklik kaydı: Her zaman tutulur**
-  - Her yazma işleminde kim, ne, ne zaman kaydedilir. Ayarlarda listelenir.
-- **Dosya saklama: Supabase Storage**
-  - Belge ve logolar özel klasörde, imzalı adresle sunulur. Profil fotoğrafı genel olabilir.
-- **Giriş: E-posta + şifre**
-  - Kayıt ekranı yok; hesabı yönetici açar.
-- **Paketler: Yalnız Supabase istemcisi**
+  - Her yazma işleminde ne, ne zaman değişti cihazda kaydedilir. Ayarlarda listelenir.
+- **Dosya saklama: Tarayıcıda**
+  - Yüklenen belgeler IndexedDB'de saklanır. Uzak depolama yok.
+- **Giriş: Yok**
+  - Giriş ekranı, kayıt ekranı ve şifre yoktur. Uygulama açılır açılmaz kullanılır.
+- **Yedek: Dosyaya dışa ve içe aktarma**
+  - Bütün veri tek dosyaya dışa aktarılır, aynı dosyadan geri yüklenir.
+    Veri cihazda durduğu için yedeği kullanıcı alır.
+- **Paketler: Yok**
   - Excel gerekiyorsa xlsx. Başka paket eklemeden önce sor.
 - **Para birimi: ₺ TRY**
   - Binlik nokta, ondalık virgül: 12.400,00
@@ -70,7 +74,8 @@ Bunlar Nizam Soft standardıdır. Tartışılmaz, değiştirilmez, alternatif
   1. Yazılımcı
   2. Yönetici
   - Üstteki katman, alttakinin gördüğü her şeyi görür.
-  - Yetki veritabanı kurallarıyla (RLS) uygulanır, yalnız arayüzde gizlemekle değil.
+  - Sunucu ve veritabanı kuralı (RLS) olmadığı için yetki **yalnız arayüzde**
+    uygulanır. Bu bir güvenlik sınırı değildir; veri zaten cihazın sahibinindir.
 
 ### Henüz belirlenmedi
 
@@ -225,8 +230,9 @@ Kararlar rastgele uygulanmaz. Sonrakiler öncekilerin üstüne kurulur:
 
 - **Açılış ekranı: Logo + yüzde + mesaj**
   - Çubuk, yüzde ve "Veriler alınıyor…" gibi durum yazısı.
-- **Giriş ekranı: Ortada kart**
-  - Ortada tek kart: logo, e-posta, şifre, giriş düğmesi.
+- **Giriş ekranı: Ortada kart** — *geçersiz*
+  - Veri tarayıcıda durduğu ve giriş olmadığı için bu karar bu projede
+    uygulanmaz. Açılış ekranından doğrudan Panel'e geçilir.
 
 ### Durumlar
 
