@@ -44,8 +44,10 @@ Bunlar Nizam Soft standardıdır. Tartışılmaz, değiştirilmez, alternatif
   - Her yazma işleminde ne, ne zaman değişti cihazda kaydedilir. Ayarlarda listelenir.
 - **Dosya saklama: Tarayıcıda**
   - Yüklenen belgeler IndexedDB'de saklanır. Uzak depolama yok.
-- **Giriş: Yok**
-  - Giriş ekranı, kayıt ekranı ve şifre yoktur. Uygulama açılır açılmaz kullanılır.
+- **Giriş: Yerel PIN**
+  - Sunucu ve hesap yoktur; kimlik doğrulama uzakta değil, cihazda yapılır.
+    Uygulama açılınca PIN sorar. PIN de veri gibi cihazda durur, hiçbir yere
+    gönderilmez. Kayıt ekranı yoktur; PIN ilk açılışta kurulur.
 - **Yedek: JSON dosyası**
   - Bütün veri tek JSON dosyasına dışa aktarılır, aynı dosyadan geri yüklenir.
     Veri cihazda durduğu için yedeği kullanıcı alır.
@@ -85,6 +87,10 @@ Bunlar Nizam Soft standardıdır. Tartışılmaz, değiştirilmez, alternatif
 ### Henüz belirlenmedi
 
 - Alan adı
+- PIN'in kaç haneli olacağı
+- PIN unutulursa ne olacağı
+- PIN'in her açılışta mı sorulacağı
+- PIN'in veriyi şifreleyip şifrelemeyeceği
 
 ## Tasarım kararları
 
@@ -235,9 +241,9 @@ Kararlar rastgele uygulanmaz. Sonrakiler öncekilerin üstüne kurulur:
 
 - **Açılış ekranı: Logo + yüzde + mesaj**
   - Çubuk, yüzde ve "Veriler alınıyor…" gibi durum yazısı.
-- **Giriş ekranı: Ortada kart** — *geçersiz*
-  - Veri tarayıcıda durduğu ve giriş olmadığı için bu karar bu projede
-    uygulanmaz. Açılış ekranından doğrudan Panel'e geçilir.
+- **Giriş ekranı: Ortada kart**
+  - Ortada tek kart: logo ve PIN girişi. Sunucu olmadığı için e-posta ve şifre
+    yoktur; kartın içinde yalnız PIN alanı ve giriş düğmesi durur.
 
 ### Durumlar
 
