@@ -50,9 +50,9 @@ export const GEZINME = [
 
 /** Alt çubuğun ortasındaki + düğmesinin menüsü. */
 export const EKLE_MENUSU = [
-  { ad: 'Gelir ekle',    simge: 'gelir' },
-  { ad: 'Gider ekle',    simge: 'gider' },
-  { ad: 'Yatırım ekle',  simge: 'yatirim' },
-  { ad: 'Abonelik ekle', simge: 'abonelik' },
-  { ad: 'Ekstre yükle',  simge: 'yukle' },
+  { anahtar: 'gelir',    ad: 'Gelir ekle',    simge: 'gelir' },
+  { anahtar: 'gider',    ad: 'Gider ekle',    simge: 'gider' },
+  { anahtar: 'yatirim',  ad: 'Yatırım ekle',  simge: 'yatirim' },
+  { anahtar: 'abonelik', ad: 'Abonelik ekle', simge: 'abonelik' },
+  { anahtar: 'ekstre',   ad: 'Ekstre yükle',  simge: 'yukle' },
 ];

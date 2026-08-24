@@ -2,7 +2,8 @@
    Üstte yatay sekme: Banka · Yatırımlar · Abonelikler. */
 
 import { simge } from '../simge.js';
-import { git, suAnki } from '../yonlendirici.js';
+import { git, suAnki, cozumle } from '../yonlendirici.js';
+import { hesapDuzenle, abonelikDuzenle } from '../kayitlar.js';
 import * as vt from '../veri/vt.js';
 import { bakiyeler, portfoy } from '../veri/hesap.js';
 import { paraSimgeli, para, karsilastir, kacir } from '../veri/bicim.js';
@@ -25,13 +26,29 @@ function bosDurum(ikon, baslik, yazi, dugme) {
       ${simge(ikon, 'simge-40')}
       <h3>${kacir(baslik)}</h3>
       <p>${kacir(yazi)}</p>
-      ${dugme ? `<button class="dugme" type="button" disabled>${simge('arti')}<span>${kacir(dugme)}</span></button>` : ''}
+      ${dugme ? `<button class="dugme" type="button" data-yeni>${simge('arti')}<span>${kacir(dugme)}</span></button>` : ''}
     </div>`;
+}
+
+/** Listenin üstündeki "yeni ekle" şeridi. */
+function ekleSeridi(yazi) {
+  return `<div class="liste-arac">
+    <div class="liste-arac-sol"></div>
+    <button class="dugme dugme-sade dugme-kucuk" type="button" data-yeni>
+      ${simge('arti')}<span>${kacir(yazi)}</span></button>
+  </div>`;
+}
+
+/** Satırın sağındaki düzenle kalemi. */
+function kalemDugmesi(id) {
+  return `<button class="dugme-simge-tek satir-kalem" type="button"
+            data-duzenle="${kacir(id)}" aria-label="Düzenle">${simge('kalem', 'simge-16')}</button>`;
 }
 
 /* ------------------------------------------------------------------ banka */
 
 async function cizBanka(kap) {
+  const yenile = () => cozumle();
   const { hesaplar, bakiye } = await bakiyeler();
   /* Sıra: banka hesapları, sonra nakit, en sonda kartlar; her grup ada göre. */
   const TUR_SIRASI = { 'Banka Hesabı': 0, 'Nakit Cüzdan': 1, 'Kredi Kartı': 2 };
@@ -42,10 +59,12 @@ async function cizBanka(kap) {
   if (!aktif.length) {
     kap.innerHTML = bosDurum('banka', 'Henüz hesap yok',
       'Banka hesabını, nakit cüzdanını ve kredi kartlarını burada tanımlarsın.', 'Hesap ekle');
+    kap.querySelector('[data-yeni]').addEventListener('click', () => hesapDuzenle(null, yenile));
     return;
   }
 
   kap.innerHTML = `
+    ${ekleSeridi('Hesap ekle')}
     <ul class="kart-liste">
       ${aktif.map(h => {
         const b = bakiye[h.id];
@@ -64,12 +83,20 @@ async function cizBanka(kap) {
             ${kacir(paraSimgeli(b))}
             ${kart && b < 0 ? '<span class="silik borc-not">borç</span>' : ''}
           </div>
+          ${kalemDugmesi(h.id)}
         </li>`;
       }).join('')}
     </ul>`;
 
+  kap.querySelector('[data-yeni]').addEventListener('click', () => hesapDuzenle(null, yenile));
   kap.querySelectorAll('[data-hesap]').forEach(oge => {
     oge.addEventListener('click', () => git('/hesaplar/hareketler/' + oge.dataset.hesap));
+  });
+  kap.querySelectorAll('[data-duzenle]').forEach(oge => {
+    oge.addEventListener('click', olay => {
+      olay.stopPropagation();
+      hesapDuzenle(oge.dataset.duzenle, yenile);
+    });
   });
 }
 
@@ -115,16 +142,19 @@ async function cizAbonelikler(kap) {
   const [abonelikler, hesaplar] = await Promise.all([
     vt.hepsi('abonelikler'), vt.hepsi('bankaHesaplari'),
   ]);
+  const yenile = () => cozumle();
   const aktif = abonelikler.filter(a => a.durum !== 'Pasif')
     .sort((a, b) => karsilastir(a.abonelikAdi, b.abonelikAdi));
   if (!aktif.length) {
     kap.innerHTML = bosDurum('abonelik', 'Abonelik yok',
       'Her ay tekrar eden ödemelerini ekle; ödendi tikleri burada tutulur.', 'Abonelik ekle');
+    kap.querySelector('[data-yeni]').addEventListener('click', () => abonelikDuzenle(null, yenile));
     return;
   }
   const hesapAdi = new Map(hesaplar.map(h => [h.id, h.hesapAdi]));
 
   kap.innerHTML = `
+    ${ekleSeridi('Abonelik ekle')}
     <ul class="kart-liste">
       ${aktif.map(a => `
         <li class="kart-satir" data-abonelik="${kacir(a.id)}" tabindex="0">
@@ -136,11 +166,19 @@ async function cizAbonelikler(kap) {
             </div>
           </div>
           <div class="kart-satir-sag">${kacir(paraSimgeli(a.aylikTutar))}</div>
+          ${kalemDugmesi(a.id)}
         </li>`).join('')}
     </ul>`;
 
+  kap.querySelector('[data-yeni]').addEventListener('click', () => abonelikDuzenle(null, yenile));
   kap.querySelectorAll('[data-abonelik]').forEach(oge => {
     oge.addEventListener('click', () => git('/abonelikler/odemeler/' + oge.dataset.abonelik));
+  });
+  kap.querySelectorAll('[data-duzenle]').forEach(oge => {
+    oge.addEventListener('click', olay => {
+      olay.stopPropagation();
+      abonelikDuzenle(oge.dataset.duzenle, yenile);
+    });
   });
 }
 

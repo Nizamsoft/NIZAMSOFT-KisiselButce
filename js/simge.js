@@ -10,6 +10,8 @@ const YOLLAR = {
   ayarlar:    '<path d="M12.2 2h-.4a2 2 0 0 0-2 2 2 2 0 0 1-3 1.7l-.3-.2a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.3.2a2 2 0 0 1 0 3.4l-.3.2a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.3-.2a2 2 0 0 1 3 1.7 2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2 2 2 0 0 1 3-1.7l.3.2a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.3-.2a2 2 0 0 1 0-3.4l.3-.2a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.3.2a2 2 0 0 1-3-1.7 2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/>',
   arti:       '<path d="M12 5v14M5 12h14" fill="none"/>',
   geri:       '<path d="m15 18-6-6 6-6" fill="none"/>',
+  kapat:      '<path d="M18 6 6 18M6 6l12 12" fill="none"/>',
+  kalem:      '<path d="M12 20h9" fill="none"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
   sagOk:      '<path d="m9 18 6-6-6-6" fill="none"/>',
   yardim:     '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01" fill="none"/>',
   kilit:      '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" fill="none"/>',

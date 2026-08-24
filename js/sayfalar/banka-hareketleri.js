@@ -3,7 +3,8 @@
    yürüyen bakiye. Telefonda her kayıt iki satırlık karta döner. */
 
 import { simge } from '../simge.js';
-import { git, geriDon } from '../yonlendirici.js';
+import { git, geriDon, cozumle } from '../yonlendirici.js';
+import { hesapDuzenle, hareketEkle, hareketDetay } from '../kayitlar.js';
 import * as vt from '../veri/vt.js';
 import { liste } from '../liste.js';
 import { yuruyenBakiyeliListe, guncelBakiye } from '../veri/hesap.js';
@@ -64,12 +65,25 @@ export default {
           <b>${kacir(paraSimgeli(kartMi && bakiye < 0 ? Math.abs(bakiye) : bakiye))}</b>
         </div>
       </div>
-      ${hesap.hesapTuru === 'Nakit Cüzdan' ? '' : `
-        <button class="dugme dugme-sade hesap-eylem" type="button" id="ekstre-yukle">
-          ${simge('yukle')}<span>Ekstre yükle</span>
-        </button>`}
+      <div class="hesap-eylemler">
+        <button class="dugme" type="button" id="hareket-ekle">
+          ${simge('arti')}<span>Hareket ekle</span>
+        </button>
+        ${hesap.hesapTuru === 'Nakit Cüzdan' ? '' : `
+          <button class="dugme dugme-sade" type="button" id="ekstre-yukle">
+            ${simge('yukle')}<span>Ekstre yükle</span>
+          </button>`}
+        <button class="dugme dugme-sade" type="button" id="hesap-duzenle">
+          ${simge('kalem')}<span>Hesabı düzenle</span>
+        </button>
+      </div>
       <div id="hareket-liste"></div>`;
 
+    const yenile = () => cozumle();
+    kap.querySelector('#hareket-ekle')
+       .addEventListener('click', () => hareketEkle({ hesap: hesap.id, yon: 'Gider' }, yenile));
+    kap.querySelector('#hesap-duzenle')
+       .addEventListener('click', () => hesapDuzenle(hesap.id, yenile));
     const yukleDugme = kap.querySelector('#ekstre-yukle');
     if (yukleDugme) {
       yukleDugme.addEventListener('click', () => git('/hesaplar/ekstre-yukle/' + hesap.id));
@@ -84,11 +98,14 @@ export default {
         { ad: 'Giriş şekli', as: 'girisSekli', degerler: ['Ekstreden', 'Elle'] },
       ],
       ozet: g => `${g.length} hareket · devir ${paraSimgeli(hesap.devirBakiye)}`,
+      satirTikla: k => hareketDetay(k.id, yenile),
       bos: {
         baslik: 'Bu hesapta hareket yok',
         yazi: hesap.hesapTuru === 'Nakit Cüzdan'
           ? 'Nakit hareketleri elle girilir. İlk harcamanı ekleyerek başla.'
           : 'Ekstre yükleyerek ya da elle girerek ilk hareketi ekle.',
+        dugme: 'Hareket ekle',
+        dugmeIslev: () => hareketEkle({ hesap: hesap.id, yon: 'Gider' }, yenile),
       },
       sutunlar: [
         { ad: 'Tarih', as: 'tarih', ciz: k => kacir(tarih(k.tarih)), telefonda: 'alt' },

@@ -3,6 +3,7 @@
 
 import { simge } from '../simge.js';
 import * as vt from '../veri/vt.js';
+import { yatirimAraciDuzenle } from '../kayitlar.js';
 import { liste } from '../liste.js';
 import { paraSimgeli, tarih, kacir } from '../veri/bicim.js';
 
@@ -13,8 +14,19 @@ export default {
     kap.innerHTML = '<div class="yukleniyor"><div class="yukleniyor-cubuk"></div></div>';
     const araclar = (await vt.hepsi('yatirimAraclari')).filter(a => a.durum !== 'Pasif');
 
-    kap.innerHTML = '<div id="arac-liste"></div>';
+    const yeniden = () => this.ciz(kap);
+    kap.innerHTML = `
+      <div class="liste-arac">
+        <div class="liste-arac-sol"></div>
+        <button class="dugme dugme-sade dugme-kucuk" type="button" id="arac-ekle">
+          ${simge('arti')}<span>Araç ekle</span></button>
+      </div>
+      <div id="arac-liste"></div>`;
+    kap.querySelector('#arac-ekle')
+       .addEventListener('click', () => yatirimAraciDuzenle(null, yeniden));
+
     liste(kap.querySelector('#arac-liste'), {
+      satirTikla: k => yatirimAraciDuzenle(k.id, yeniden),
       kayitlar: araclar,
       simge: 'yatirim',
       arananAlanlar: ['aracAdi', 'birim'],
@@ -23,6 +35,8 @@ export default {
       bos: {
         baslik: 'Araç yok',
         yazi: 'Gram altın, dolar, hisse gibi yatırım araçlarını ve güncel fiyatlarını burada tutarsın.',
+        dugme: 'Araç ekle',
+        dugmeIslev: () => yatirimAraciDuzenle(null, yeniden),
       },
       sutunlar: [
         { ad: 'Araç Adı', as: 'aracAdi', ciz: k => kacir(k.aracAdi), telefonda: 'ust' },

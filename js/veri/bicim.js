@@ -74,3 +74,29 @@ export function kacir(metin) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
+
+/**
+ * Kullanıcının yazdığı para metnini sayıya çevirir.
+ * "12.400,50" → 12400.5 · "1234,5" → 1234.5 · "1234.5" → 1234.5
+ * Binlik nokta ve ondalık virgül Türkçe düzene göre okunur.
+ */
+export function paraCoz(metin) {
+  const ham = String(metin ?? '').trim().replace(/[\s₺]/g, '');
+  if (!ham) return null;
+  let sade;
+  if (ham.includes(',')) {
+    sade = ham.replace(/\./g, '').replace(',', '.');   // 12.400,50 → 12400.50
+  } else if ((ham.match(/\./g) || []).length > 1) {
+    sade = ham.replace(/\./g, '');                     // 1.234.567 → 1234567
+  } else {
+    sade = ham;                                        // 1234.5 ya da 1234
+  }
+  const sayi = Number(sade);
+  return Number.isFinite(sayi) ? sayi : null;
+}
+
+/** Sayıyı alan girişinde gösterilecek biçime çevirir (binlik ayracı yok). */
+export function sayiyaYaz(deger) {
+  if (deger === null || deger === undefined || deger === '') return '';
+  return String(deger).replace('.', ',');
+}

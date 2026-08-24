@@ -4,6 +4,7 @@
 
 import { simge } from '../simge.js';
 import * as vt from '../veri/vt.js';
+import { baslikDuzenle } from '../kayitlar.js';
 import { paraSimgeli, sadelestir, karsilastir, kacir } from '../veri/bicim.js';
 
 /**
@@ -17,13 +18,24 @@ export function basliklarSayfasi(tablo, limitli) {
     const acik = new Set();
     let arama = '';
 
+    /* Ekleme ve düzenlemeden sonra listeyi yeniden kur. */
+    const yeniden = () => ciz(kap);
+
     kap.innerHTML = `
       <div class="alan arama">
         ${simge('ara', 'simge-16')}
         <input class="alan-giris" type="search" id="baslik-arama"
                placeholder="Başlıkta ara…" autocomplete="off" aria-label="Başlıkta ara">
       </div>
+      <div class="liste-arac">
+        <div class="liste-arac-sol"></div>
+        <button class="dugme dugme-sade dugme-kucuk" type="button" id="baslik-ekle">
+          ${simge('arti')}<span>Başlık ekle</span></button>
+      </div>
       <div id="baslik-govde"></div>`;
+
+    kap.querySelector('#baslik-ekle')
+       .addEventListener('click', () => baslikDuzenle(tablo, null, yeniden));
 
     const govde = kap.querySelector('#baslik-govde');
     const aramaGiris = kap.querySelector('#baslik-arama');
@@ -59,6 +71,7 @@ export function basliklarSayfasi(tablo, limitli) {
         <div class="liste-arac"><div class="liste-arac-sol">
           ${dallar.length} ana başlık · ${dallar.reduce((t, d) => t + d.altlar.length, 0)} alt başlık
         </div></div>
+        <!-- ana başlığa dokunmak altlarını açar; kalem düzenler -->
         <ul class="kart-liste">
           ${dallar.map(d => {
             const acikMi = acik.has(d.ana.id) || Boolean(q);
@@ -77,6 +90,9 @@ export function basliklarSayfasi(tablo, limitli) {
                 ${limitli ? `<div class="kart-satir-sag">${d.ana.aylikLimit
                   ? kacir(paraSimgeli(d.ana.aylikLimit))
                   : '<span class="silik limit-yok">limit yok</span>'}</div>` : ''}
+                <button class="dugme-simge-tek satir-kalem" type="button"
+                        data-duzenle="${kacir(d.ana.id)}" aria-label="Düzenle">
+                  ${simge('kalem', 'simge-16')}</button>
               </div>
               <ul class="agac-alt ${acikMi ? 'acik' : ''}">
                 ${d.gorunen.map(alt => `
@@ -84,6 +100,9 @@ export function basliklarSayfasi(tablo, limitli) {
                     <div class="kart-satir-govde">
                       <div class="kart-satir-ust alt-baslik">${kacir(alt.baslikAdi)}</div>
                     </div>
+                    <button class="dugme-simge-tek satir-kalem" type="button"
+                            data-duzenle="${kacir(alt.id)}" aria-label="Düzenle">
+                      ${simge('kalem', 'simge-16')}</button>
                   </li>`).join('')}
               </ul>
             </li>`;
@@ -95,6 +114,12 @@ export function basliklarSayfasi(tablo, limitli) {
           const id = oge.dataset.ana;
           if (acik.has(id)) acik.delete(id); else acik.add(id);
           cizAgac();
+        });
+      });
+      govde.querySelectorAll('[data-duzenle]').forEach(oge => {
+        oge.addEventListener('click', olay => {
+          olay.stopPropagation();
+          baslikDuzenle(tablo, oge.dataset.duzenle, yeniden);
         });
       });
     }

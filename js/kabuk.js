@@ -4,8 +4,10 @@
 
 import { simge } from './simge.js';
 import { GEZINME, EKLE_MENUSU } from './sayfalar/kayit.js';
-import { git, geriDon } from './yonlendirici.js';
+import { git, geriDon, cozumle, suAnki } from './yonlendirici.js';
 import { FIRMA_ADI, UYGULAMA_ADI } from './surum.js';
+import { hareketEkle, abonelikDuzenle } from './kayitlar.js';
+import { bildir } from './pencere.js';
 
 let menuAcik = false;
 
@@ -107,7 +109,8 @@ function ekleMenusunuAc() {
   menu.className = 'ekle-menu';
   menu.setAttribute('role', 'menu');
   menu.innerHTML = EKLE_MENUSU.map(m => `
-    <button type="button" role="menuitem" disabled>${simge(m.simge)}<span>${m.ad}</span></button>
+    <button type="button" role="menuitem" data-is="${m.anahtar}">
+      ${simge(m.simge)}<span>${m.ad}</span></button>
   `).join('');
 
   function kapat() {
@@ -120,18 +123,34 @@ function ekleMenusunuAc() {
 
   perde.addEventListener('click', kapat);
   document.addEventListener('keydown', kacinca);
+  menu.querySelectorAll('[data-is]').forEach(dugme => {
+    dugme.addEventListener('click', () => { kapat(); menuIsi(dugme.dataset.is); });
+  });
   document.body.append(perde, menu);
   menu.querySelector('button').focus();
 }
 
-/* Geçici bildirim — Aşama 4'te sağ üstte yığılan kartlara dönecek. */
+/** Ekleme menüsündeki her öğenin yaptığı iş. */
+function menuIsi(anahtar) {
+  const yenile = () => cozumle();
+  if (anahtar === 'gelir') hareketEkle({ yon: 'Gelir' }, yenile);
+  else if (anahtar === 'gider') hareketEkle({ yon: 'Gider' }, yenile);
+  else if (anahtar === 'abonelik') abonelikDuzenle(null, yenile);
+  else if (anahtar === 'yatirim') git('/hesaplar?sekme=yatirimlar');
+  else if (anahtar === 'ekstre') ekstreyeGit();
+}
+
+/** Ekstre yükleme bir hesaba bağlıdır; hesap seçili değilse hesaplara götürür. */
+function ekstreyeGit() {
+  const { yol } = suAnki();
+  const eslesme = yol.match(/^\/hesaplar\/hareketler\/(.+)$/);
+  if (eslesme) git('/hesaplar/ekstre-yukle/' + eslesme[1]);
+  else {
+    bildir('Ekstre yükleyeceğin hesabı seç.', 'bilgi');
+    git('/hesaplar?sekme=banka');
+  }
+}
+
 function duyur(metin) {
-  const kutu = document.createElement('div');
-  kutu.className = 'kart';
-  kutu.setAttribute('role', 'status');
-  kutu.style.cssText =
-    'position:fixed;z-index:60;top:52px;right:10px;max-width:280px;font-size:13px';
-  kutu.textContent = metin;
-  document.body.append(kutu);
-  setTimeout(() => kutu.remove(), 2600);
+  bildir(metin, 'bilgi');
 }

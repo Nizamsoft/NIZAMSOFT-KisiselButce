@@ -1,0 +1,188 @@
+/* Nizam Soft · Kişisel Bütçe — pencere, form ve bildirim
+   Veri girişi ortada küçük pencerede. Silme pencere ile onaylanır.
+   Bildirim sağ üst köşede yığılır. */
+
+.pencere-perde {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(22, 24, 29, .34);
+}
+
+.pencere {
+  position: fixed;
+  z-index: 71;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 24px);
+  max-width: 380px;
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: 12px;
+  box-shadow: var(--golge-hap);
+  overflow: hidden;
+}
+.pencere-genis { max-width: 520px; }
+
+.pencere-baslik {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 14px;
+  border-bottom: 1px solid var(--cizgi);
+}
+.pencere-baslik h2 { flex: 1 1 auto; font-size: 16px; }
+
+.pencere-govde {
+  flex: 1 1 auto;
+  padding: 14px;
+  overflow-y: auto;
+}
+.pencere-yazi { margin: 0 0 4px; color: var(--metin-soft); }
+
+.pencere-dugmeler {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+.pencere-dugmeler .dugme { flex: 1 1 auto; }
+.pencere-dugmeler > span { flex: 1 1 auto; }
+
+/* ------------------------------------------------------------------ form */
+.kayit-form .alan:last-of-type { margin-bottom: 0; }
+.alan-ipucu { margin-top: 4px; font-size: 12px; color: var(--metin-silik); }
+.alan-uzun { min-height: 76px; padding: 8px 12px; resize: vertical; }
+.zorunlu { color: var(--tehlike); }
+
+.para-alan { position: relative; }
+.para-alan .alan-giris { padding-right: 30px; text-align: right; font-variant-numeric: tabular-nums; }
+.para-simge {
+  position: absolute;
+  right: 11px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--metin-silik);
+  pointer-events: none;
+}
+
+.onay-kutu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.onay-kutu input { width: 20px; height: 20px; accent-color: var(--vurgu); }
+
+.form-hata {
+  min-height: 18px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tehlike);
+}
+.ikinci-tehlike { color: var(--tehlike); border-color: var(--tehlike); }
+
+/* ------------------------------------------------------------- bildirim */
+/* Sağ üst köşede yığılan kartlar */
+.bildirim-yigini {
+  position: fixed;
+  z-index: 75;
+  top: calc(var(--ust-cubuk-yukseklik) + 8px);
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(320px, calc(100% - 20px));
+  pointer-events: none;
+}
+.bildirim {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.bildirim.basari  { border-left-color: var(--basari); }
+.bildirim.basari .simge { color: var(--basari); }
+.bildirim.tehlike { border-left-color: var(--tehlike); }
+.bildirim.tehlike .simge { color: var(--tehlike); }
+.bildirim.bilgi .simge { color: var(--vurgu); }
+
+/* -------------------------------------------------------- detay ekranı */
+/* Katlanır bölümler: kapalı gelir, dokununca açılır. */
+.bolum {
+  margin-bottom: 8px;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: var(--kose);
+  box-shadow: var(--golge-kart);
+  overflow: hidden;
+}
+.bolum-baslik {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  color: var(--metin);
+  font-family: var(--yazi-metin);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.bolum-baslik .agac-ok { margin-left: auto; color: var(--metin-silik); }
+.bolum[open] .agac-ok { transform: rotate(90deg); }
+.bolum-govde { padding: 0 12px 12px; }
+
+.satir-cift {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--cizgi);
+  font-size: 13px;
+}
+.satir-cift:last-child { border-bottom: none; }
+.satir-cift dt { color: var(--metin-silik); }
+.satir-cift dd { margin: 0; text-align: right; font-weight: 500; }
+
+/* Liste üstündeki küçük ekleme düğmesi ve satır kalemi */
+.dugme-kucuk { min-height: 36px; padding: 0 12px; font-size: 13px; }
+.satir-kalem { flex: none; width: 36px; height: 36px; }
+.satir-kalem .simge { color: var(--metin-silik); }
+.duzenleme-not { margin-bottom: 14px; padding: 10px 12px; }
+.duzenleme-not p { margin: 8px 0 0; font-size: 12px; }
+
+.tik-kutu { flex: none; min-height: 44px; padding-left: 6px; }
+
+/* Hesap ekranındaki eylem düğmeleri */
+.hesap-eylemler { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.hesap-eylemler .dugme { flex: 1 1 auto; }
+@media (min-width: 900px) { .hesap-eylemler .dugme { flex: 0 0 auto; } }
+
+/* Hareket detayının tepesi */
+.detay-tepe { padding: 4px 0 14px; text-align: center; }
+.detay-tutar {
+  font-family: var(--yazi-baslik);
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.detay-tepe.arti .detay-tutar { color: var(--basari); }
+.detay-tepe.eksi .detay-tutar { color: var(--tehlike); }
+.detay-aciklama { margin-top: 4px; font-size: 13px; color: var(--metin-soft); }
+.bolum-baslik .agac-ok { font-size: 18px; color: var(--metin-silik); }
+
+.yatirim-ozet { margin-bottom: 12px; padding: 4px 12px; }
+.yatirim-ozet .arti { color: var(--basari); }
+.yatirim-ozet .eksi { color: var(--tehlike); }
