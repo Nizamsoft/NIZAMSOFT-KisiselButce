@@ -1,0 +1,86 @@
+/* Nizam Soft · Kişisel Bütçe — temel: sıfırlama, tipografi, ortak parçalar */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--arka-plan);
+  color: var(--metin);
+  font-family: var(--yazi-metin);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--yazi-baslik);
+  font-weight: 700;
+  color: var(--metin);
+  margin: 0;
+  letter-spacing: -.01em;
+}
+h1 { font-size: 20px; }
+h2 { font-size: 17px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; }
+
+p { margin: 0 0 10px; color: var(--metin-soft); }
+a { color: var(--vurgu); }
+
+.soft  { color: var(--metin-soft); }
+.silik { color: var(--metin-silik); }
+.gizli { display: none !important; }
+/* hidden özniteliği, display:flex/grid veren sınıfları da ezmeli */
+[hidden] { display: none !important; }
+
+/* Sayısal hizalama: para ve tarih sütunları kaymasın */
+.sayi, .para {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+.para { text-align: right; white-space: nowrap; }
+.para.eksi { color: var(--tehlike); }
+.para.arti { color: var(--basari); }
+
+/* Odak — erişilebilirlik: her odaklanabilir öğede görünür halka */
+:focus-visible {
+  outline: 2px solid var(--vurgu);
+  outline-offset: 2px;
+  border-radius: var(--kose);
+}
+
+/* Ekran okuyucuya özel */
+.yalniz-okuyucu {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Boş durum: simge + yazı + düğme */
+.bos-durum {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  padding: 48px 24px;
+  min-height: 260px;
+}
+.bos-durum .simge { color: var(--metin-silik); }
+.bos-durum h3 { color: var(--metin); }
+.bos-durum p { max-width: 320px; margin: 0; color: var(--metin-silik); }
+
+/* Yer tutucu metin de 4.5:1 kontrastı geçmeli — tarayıcı varsayılanı çok açık */
+::placeholder { color: var(--metin-silik); opacity: 1; }

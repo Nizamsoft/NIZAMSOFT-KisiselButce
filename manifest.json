@@ -1,0 +1,17 @@
+{
+  "name": "Kişisel Bütçe · Nizam Soft",
+  "short_name": "Kişisel Bütçe",
+  "description": "Gelirini, giderini ve birikimini tek yerden takip et.",
+  "lang": "tr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f5f7",
+  "theme_color": "#f4f5f7",
+  "icons": [
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

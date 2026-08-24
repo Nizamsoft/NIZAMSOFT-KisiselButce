@@ -1,0 +1,333 @@
+/* Nizam Soft · Kişisel Bütçe — uygulama kabuğu
+   Üst çubuk (ince başlık) · alt sekme şeridi (yüzen hap, ortada +) ·
+   900px ve üstünde solda dikey panel. */
+
+.uygulama {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ---- Üst çubuk: ince başlık, 44px ---- */
+.ust-cubuk {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--ust-cubuk-yukseklik);
+  padding: 0 6px;
+  background: var(--yuzey);
+  border-bottom: 1px solid var(--cizgi);
+}
+.ust-cubuk-baslik {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 4px;
+  font-family: var(--yazi-baslik);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ust-cubuk .cip { margin-left: 4px; }
+
+/* ---- İçerik: ortada sınırlı, en fazla 1200px ---- */
+.icerik {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: var(--icerik-genislik);
+  margin: 0 auto;
+  padding: 12px 12px calc(var(--alt-cubuk-yukseklik) + 28px);
+}
+
+/* ---- Alt sekme şeridi: yüzen hap, ortasında yükseltilmiş + ---- */
+.alt-cubuk {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: calc(var(--hap-bosluk) + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  width: calc(100% - var(--hap-bosluk) * 2);
+  max-width: 460px;
+  height: var(--alt-cubuk-yukseklik);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: 18px;
+  box-shadow: var(--golge-hap);
+}
+.alt-sekme {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 100%;
+  min-width: 44px;
+  border: none;
+  background: none;
+  color: var(--metin-silik);
+  font-family: var(--yazi-metin);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 16px;
+}
+.alt-sekme[aria-current="page"] { color: var(--vurgu); font-weight: 600; }
+.alt-sekme[aria-current="page"] .simge { fill-opacity: .2; }
+
+/* Ortadaki yükseltilmiş ekleme düğmesi */
+.alt-ekle {
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  width: 52px;
+  height: 52px;
+  margin-top: -20px;
+  border: 3px solid var(--yuzey);
+  border-radius: 999px;
+  background: var(--degrade-vurgu);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: var(--golge-vurgu);
+}
+
+/* ---- Ekleme menüsü (+ düğmesine basınca) ---- */
+.ekle-perde {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: rgba(22, 24, 29, .32);
+  border: none;
+  padding: 0;
+}
+.ekle-menu {
+  position: fixed;
+  z-index: 46;
+  left: 50%;
+  bottom: calc(var(--alt-cubuk-yukseklik) + var(--hap-bosluk) * 2 + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  width: calc(100% - var(--hap-bosluk) * 2);
+  max-width: 380px;
+  padding: 6px;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: 14px;
+  box-shadow: var(--golge-hap);
+}
+.ekle-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 10px;
+  border: none;
+  border-radius: var(--kose);
+  background: none;
+  color: var(--metin);
+  font-family: var(--yazi-metin);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+.ekle-menu button:hover { background: var(--arka-plan); }
+.ekle-menu button .simge { color: var(--vurgu); }
+
+/* ---- Yan panel: yalnız 900px ve üstünde ---- */
+.yan-panel { display: none; }
+
+@media (min-width: 900px) {
+  .alt-cubuk { display: none; }
+
+  .uygulama {
+    display: grid;
+    grid-template-columns: var(--yan-panel-genislik) 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "panel cubuk"
+      "panel icerik";
+  }
+  .ust-cubuk { grid-area: cubuk; }
+  .icerik {
+    grid-area: icerik;
+    padding: 16px 20px 40px;
+  }
+
+  .yan-panel {
+    grid-area: panel;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: sticky;
+    top: var(--hap-bosluk);
+    align-self: stretch;
+    height: calc(100dvh - var(--hap-bosluk) * 2);
+    margin: var(--hap-bosluk);
+    padding: 10px;
+    background: var(--yuzey);
+    border: 1px solid var(--cizgi);
+    border-radius: 18px;
+    box-shadow: var(--golge-hap);
+    overflow-y: auto;
+  }
+  .yan-panel-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px 12px;
+  }
+  .yan-panel-logo img { width: 32px; height: 32px; border-radius: 8px; }
+  .yan-panel-logo b { font-family: var(--yazi-baslik); font-size: 14px; }
+  .yan-panel-logo span { display: block; font-size: 11px; color: var(--metin-silik); }
+
+  .yan-sekme {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 10px;
+    border: none;
+    border-radius: var(--kose);
+    background: none;
+    color: var(--metin-soft);
+    font-family: var(--yazi-metin);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+  }
+  .yan-sekme:hover { background: var(--arka-plan); color: var(--metin); }
+  /* Seçilen çubuk dokusu telefonla aynı: vurgu rengi */
+  .yan-sekme[aria-current="page"] {
+    color: var(--vurgu);
+    font-weight: 600;
+    background: rgba(14, 110, 140, .08);
+  }
+  .yan-sekme[aria-current="page"] .simge { fill-opacity: .2; }
+
+  .yan-ekle { margin-top: 8px; width: 100%; }
+}
+
+/* ---- Açılış ekranı: logo + yüzde + mesaj ---- */
+.acilis {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--arka-plan);
+}
+/* Logo görünümü: zeminsiz, altında ince ışık çizgisi, onun altında firma adı */
+.marka { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.marka img { width: 88px; height: 88px; border-radius: 20px; }
+.marka-cizgi {
+  width: 132px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--vurgu), transparent);
+}
+.marka-ad {
+  font-family: var(--yazi-baslik);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--metin-soft);
+}
+.acilis-cubuk {
+  width: 190px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--cizgi);
+  overflow: hidden;
+}
+.acilis-dolgu {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--degrade-vurgu);
+  transition: width 200ms linear;
+}
+.acilis-yuzde {
+  font-family: var(--yazi-baslik);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--metin);
+  font-variant-numeric: tabular-nums;
+}
+.acilis-mesaj { font-size: 13px; color: var(--metin-silik); }
+
+/* ---- Giriş ekranı: ortada kart ---- */
+.giris {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--arka-plan);
+  overflow-y: auto;
+}
+.giris-kart {
+  width: 100%;
+  max-width: 340px;
+  padding: 24px 20px 20px;
+  text-align: center;
+}
+.giris-kart .marka { margin-bottom: 18px; }
+.giris-kart h2 { margin-bottom: 4px; }
+.giris-aciklama { font-size: 13px; color: var(--metin-silik); margin-bottom: 16px; }
+
+/* PIN kutucukları */
+.pin-kutular { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; }
+.pin-kutu {
+  width: 34px;
+  height: 44px;
+  border: 1px solid var(--cizgi);
+  border-radius: var(--kose);
+  background: var(--arka-plan);
+  display: grid;
+  place-items: center;
+  font-family: var(--yazi-baslik);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--metin);
+}
+.pin-kutu.dolu  { border-color: var(--vurgu); background: var(--yuzey); }
+.pin-kutu.odak  { border-color: var(--vurgu); box-shadow: 0 0 0 3px rgba(14, 110, 140, .16); }
+.pin-gizli {
+  position: absolute;
+  opacity: 0;
+  width: 1px; height: 1px;
+  border: 0; padding: 0;
+}
+.giris-hata {
+  min-height: 18px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tehlike);
+}
+.giris-bag {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: var(--vurgu);
+  font-family: var(--yazi-metin);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}

@@ -1,0 +1,47 @@
+/* Nizam Soft · Kişisel Bütçe — tema değişkenleri
+   Renk, yazı ve ölçü YALNIZ burada tanımlanır. Hiçbir ekranda tekrar yazılmaz. */
+
+:root {
+  /* Renk — 2. blokta belirlenen palet */
+  --arka-plan:   #f4f5f7;
+  --yuzey:       #ffffff;
+  --cizgi:       #e1e4e9;
+  --metin:       #16181d;
+  --metin-soft:  #4a5058;
+  --metin-silik: #676e78;
+  --vurgu:       #0e6e8c;
+  --vurgu-koyu:  #0a566e;
+  --basari:      #107c41;
+  --uyari:       #a66300;
+  --tehlike:     #ce1b2e;
+
+  /* Yazı */
+  --yazi-baslik: 'Manrope', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --yazi-metin:  'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Ölçü */
+  --ust-cubuk-yukseklik: 44px;
+  --kose: 6px;
+  --satir-yukseklik: 34px;
+  --kart-bosluk: 10px;
+  --serit-kalinlik: 3px;
+  --dugme-simge: 16px;
+  --dugme-simge-bosluk: 8px;
+  --icerik-genislik: 1200px;
+  --gecis-sure: 160ms;
+  --kayma-mesafe: 8px;
+  --basma-olcek: .985;
+  --soluk-saydamlik: .55;
+  --liste-gecikme: 40ms;
+
+  /* Türetilmiş — yukarıdakilerden çıkar, yeni karar değildir */
+  --alt-cubuk-yukseklik: 60px;
+  --yan-panel-genislik: 232px;
+  --hap-bosluk: 10px;
+  --golge-kart: 0 1px 2px rgba(22, 24, 29, .06), 0 4px 12px rgba(22, 24, 29, .07);
+  --golge-hap: 0 2px 6px rgba(22, 24, 29, .08), 0 10px 24px rgba(22, 24, 29, .10);
+  --golge-vurgu: 0 6px 20px rgba(14, 110, 140, .28);
+  --isik-cizgisi: linear-gradient(90deg, transparent, rgba(255, 255, 255, .9), transparent);
+  --degrade-vurgu: linear-gradient(135deg, var(--vurgu), var(--vurgu-koyu));
+  --gren: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)' opacity='.035'/%3E%3C/svg%3E");
+}
