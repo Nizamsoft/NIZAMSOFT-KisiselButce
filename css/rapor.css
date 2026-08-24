@@ -1,0 +1,97 @@
+/* Nizam Soft · Kişisel Bütçe — raporlar */
+
+.rapor-tepe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 12px;
+}
+.rapor-tepe.gelir { border-left-color: var(--basari); }
+.rapor-tepe.gider { border-left-color: var(--tehlike); }
+.rapor-toplam {
+  font-family: var(--yazi-baslik);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.rapor-donem {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--metin-soft);
+  text-align: right;
+}
+.butce-alt { font-size: 12px; margin-top: 2px; }
+
+/* Ağaç raporu */
+.rapor-liste .rapor-dal { border-bottom: 1px solid var(--cizgi); }
+.rapor-liste .rapor-dal:last-child { border-bottom: none; }
+.rapor-ana, .rapor-alt { cursor: pointer; }
+.rapor-ana.asildi .kart-satir-ust { color: var(--tehlike); }
+.rapor-hareket { background: var(--arka-plan); min-height: 40px; cursor: pointer; }
+.rapor-hareket .kart-satir-ust { font-size: 13px; font-weight: 500; }
+.kart-dal { background: rgba(206, 27, 46, .04); }
+
+/* Bu Ay N'oldu: madde madde, tek sütun */
+.bu-ay-liste { list-style: none; margin: 0; padding: 0; }
+.bu-ay-madde {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 12px;
+}
+.bu-ay-sira {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px; height: 26px;
+  border-radius: 999px;
+  background: var(--arka-plan);
+  font-family: var(--yazi-baslik);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--metin-silik);
+}
+.bu-ay-govde { flex: 1 1 auto; min-width: 0; }
+.bu-ay-ad { font-size: 14px; font-weight: 600; }
+.bu-ay-not { font-size: 11px; }
+.bu-ay-tutar {
+  flex: none;
+  font-family: var(--yazi-baslik);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.bu-ay-madde.arti .bu-ay-tutar { color: var(--basari); }
+.bu-ay-madde.eksi .bu-ay-tutar { color: var(--tehlike); }
+.bu-ay-madde.baslangic, .bu-ay-madde.sonuc { border-left: var(--serit-kalinlik) solid var(--vurgu); }
+.bu-ay-madde.sonuc { background: rgba(14, 110, 140, .05); }
+.bu-ay-madde.sonuc .bu-ay-ad, .bu-ay-madde.sonuc .bu-ay-tutar { font-size: 16px; }
+
+/* Bütçe çubuğu */
+.butce-satir { align-items: flex-start; padding-top: 9px; padding-bottom: 9px; }
+.butce-cubuk {
+  height: 5px;
+  margin: 6px 0 5px;
+  background: var(--cizgi);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.butce-cubuk > div { height: 100%; background: var(--basari); border-radius: 999px; }
+.butce-cubuk.yaklasti > div { background: var(--uyari); }
+.butce-cubuk.asildi > div { background: var(--tehlike); }
+.butce-satir.asildi .kart-satir-ust { color: var(--tehlike); }
+.butce-kalan-not { display: block; font-size: 11px; font-weight: 500; }
+
+/* Nakit akış */
+.akis-ay { display: flex; justify-content: space-between; align-items: baseline; }
+.akis-ay-ozet { display: flex; gap: 8px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.akis-ay-ozet .arti { color: var(--basari); }
+.akis-ay-ozet .eksi { color: var(--tehlike); }
+.akis-satir.gerceklesti { background: rgba(16, 124, 65, .04); }
+.gerceklesti-etiket { color: var(--basari); }
+.akis-bakiye { display: block; font-size: 11px; font-weight: 500; }
+.akis-bakiye.eksi { color: var(--tehlike); }

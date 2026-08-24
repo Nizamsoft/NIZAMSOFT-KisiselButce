@@ -110,3 +110,42 @@ export function bildir(metin, tur = 'bilgi') {
   yig.append(kart);
   setTimeout(() => kart.remove(), 3200);
 }
+
+/**
+ * İşlem sonucu: ortada büyüyen onay işareti, sonra kendiliğinden kapanır.
+ * Kaydetme gibi tamamlanan işlerden sonra gösterilir.
+ */
+export function tikGoster(metin = 'Tamam') {
+  const kutu = document.createElement('div');
+  kutu.className = 'tik-perde';
+  kutu.setAttribute('role', 'status');
+  kutu.innerHTML = `
+    <div class="tik-kart">
+      <svg class="tik-cizim" viewBox="0 0 52 52" aria-hidden="true">
+        <circle class="tik-halka" cx="26" cy="26" r="24"/>
+        <path class="tik-yol" d="M15 27l8 8 15-16"/>
+      </svg>
+      <div class="tik-yazi">${kacir(metin)}</div>
+    </div>`;
+  document.body.append(kutu);
+  return new Promise(bitti => {
+    setTimeout(() => { kutu.remove(); bitti(); }, 1100);
+  });
+}
+
+/**
+ * Hata ekranı: uyarı simgesi, ne olduğunu anlatan cümle ve "Tekrar dene".
+ * @param {HTMLElement} kap içine çizilecek yer
+ * @param {string} yazi kullanıcıya anlatan cümle
+ * @param {Function} tekrar "Tekrar dene" düğmesinin işi
+ */
+export function hataEkrani(kap, yazi, tekrar) {
+  kap.innerHTML = `
+    <div class="bos-durum">
+      ${simge('uyari', 'simge-40')}
+      <h3>Bir şeyler ters gitti</h3>
+      <p>${kacir(yazi)}</p>
+      <button class="dugme" type="button" data-tekrar>${simge('onay')}<span>Tekrar dene</span></button>
+    </div>`;
+  kap.querySelector('[data-tekrar]').addEventListener('click', tekrar);
+}

@@ -157,7 +157,8 @@
 .satir-cift dd { margin: 0; text-align: right; font-weight: 500; }
 
 /* Liste üstündeki küçük ekleme düğmesi ve satır kalemi */
-.dugme-kucuk { min-height: 36px; padding: 0 12px; font-size: 13px; }
+/* Görsel olarak hafif ama dokunma hedefi kuralı gereği 44px. */
+.dugme-kucuk { min-height: 44px; padding: 0 14px; font-size: 13px; }
 .satir-kalem { flex: none; width: 36px; height: 36px; }
 .satir-kalem .simge { color: var(--metin-silik); }
 .duzenleme-not { margin-bottom: 14px; padding: 10px 12px; }
@@ -191,3 +192,63 @@
 .yatirim-toplam { margin-top: 12px; padding: 4px 12px; }
 .yatirim-toplam .satir-cift:last-child { border-bottom: none; }
 .yatirim-toplam dd b { font-family: var(--yazi-baslik); font-size: 15px; }
+
+/* İşlem sonucu: ortada büyüyen onay işareti */
+.tik-perde {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: rgba(22, 24, 29, .28);
+}
+.tik-kart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 26px 34px;
+  background: var(--yuzey);
+  border-radius: 14px;
+  box-shadow: var(--golge-hap);
+}
+.tik-cizim { width: 56px; height: 56px; }
+.tik-halka {
+  fill: none;
+  stroke: var(--basari);
+  stroke-width: 2.5;
+  stroke-dasharray: 151;
+  stroke-dashoffset: 151;
+  animation: tik-halka 420ms ease-out forwards;
+}
+.tik-yol {
+  fill: none;
+  stroke: var(--basari);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: tik-yol 300ms 340ms ease-out forwards;
+}
+@keyframes tik-halka { to { stroke-dashoffset: 0; } }
+@keyframes tik-yol   { to { stroke-dashoffset: 0; } }
+.tik-yazi { font-family: var(--yazi-baslik); font-size: 15px; font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tik-halka, .tik-yol { animation-duration: 1ms; animation-delay: 0ms; }
+}
+
+.yedek-uyari {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-left-color: var(--uyari);
+  font-size: 13px;
+}
+.yedek-uyari .simge { flex: none; color: var(--uyari); }
+.yedek-uyari b { display: block; color: var(--metin); }
+.yedek-uyari .silik { display: block; font-size: 12px; }
+.ayar-alt { text-align: center; margin-top: 20px; font-size: 12px; line-height: 1.7; }

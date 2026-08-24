@@ -7,7 +7,7 @@
  * şifreli durur. Burada yalnız uygulamanın kendisi (kabuk) tutulur.
  */
 
-const SURUM = '2026.4';
+const SURUM = '2026.5';
 const ONBELLEK = 'nizam-butce-' + SURUM;
 
 const KABUK = [
@@ -26,6 +26,8 @@ const KABUK = [
   './css/kabuk.css',
   './css/liste.css',
   './css/pencere.css',
+  './css/sihirbaz.css',
+  './css/rapor.css',
   './js/app.js',
   './js/kabuk.js',
   './js/giris.js',
@@ -37,6 +39,12 @@ const KABUK = [
   './js/form.js',
   './js/pencere.js',
   './js/kayitlar.js',
+  './js/vendor.js',
+  './js/yedek.js',
+  './js/cikti.js',
+  './js/veri/rapor.js',
+  './js/sayfalar/rapor-ortak.js',
+  './js/veri/ekstre.js',
   './js/veri/db.js',
   './js/veri/vt.js',
   './js/veri/tablolar.js',
@@ -82,6 +90,10 @@ self.addEventListener('activate', olay => {
       .then(() => self.clients.claim())
   );
 });
+
+/* vendor/js altındaki büyük paketler (xlsx, pdfmake) KABUK listesinde yoktur:
+   toplam 3 MB, ilk açılışı yavaşlatır. İlk kullanıldıklarında aşağıdaki
+   fetch işleyicisi onları önbelleğe alır, sonraki seferler çevrimdışı çalışır. */
 
 self.addEventListener('fetch', olay => {
   const istek = olay.request;

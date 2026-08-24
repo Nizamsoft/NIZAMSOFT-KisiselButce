@@ -306,16 +306,21 @@ export async function nakitAkis(ayIleri = 6) {
     }
   }
 
+  /* Kart borcu YALNIZ bir kez, en yakın son ödeme gününde görünür. Gelecek
+     aylarda ne kadar kart harcaması olacağı bilinemez; her ay aynı borcu
+     tekrar yazmak çıkışı olduğundan büyük gösterirdi. */
   for (const k of hesaplar.filter(h => h.hesapTuru === 'Kredi Kartı' && h.durum === 'Aktif' && h.sonOdemeGunu)) {
     const borc = Math.abs(Math.min(0, guncelBakiye(k, hareketler, yatirimTurleri)));
+    if (!borc) continue;
     for (let t = new Date(bas); t <= bit; t.setMonth(t.getMonth() + 1)) {
       const gun = ayinGunu(t.getFullYear(), t.getMonth(), Number(k.sonOdemeGunu));
-      if (gun < bas || gun > bit) continue;
+      if (gun < bugunT || gun > bit) continue;
       satirlar.push({
         id: `kart:${k.id}:${gunMetni(gun)}`, tarih: gunMetni(gun),
         adi: k.hesapAdi + ' son ödeme', kaynak: 'Kredi Kartı Ödemesi', yon: 'Gider',
         tahminiTutar: borc, hesap: k.id,
       });
+      break;                      // yalnız en yakın ödeme günü
     }
   }
 
@@ -345,10 +350,13 @@ export async function nakitAkis(ayIleri = 6) {
   const nakit = hesaplar
     .filter(h => NAKITE_SAYILAN.includes(h.hesapTuru) && h.durum === 'Aktif')
     .reduce((t, h) => t + guncelBakiye(h, hareketler, yatirimTurleri), 0);
+  /* Gerçekleşmiş satırlar hesap bakiyesine ZATEN yansımıştır; yürüyen
+     bakiyeye ikinci kez eklenmezler. */
   let yuruyen = nakit;
   for (const s of satirlar) {
-    const tutar = s.gerceklesenTutar ?? s.tahminiTutar;
-    yuruyen += s.yon === 'Gelir' ? tutar : -tutar;
+    if (s.durum !== 'Gerçekleşti') {
+      yuruyen += s.yon === 'Gelir' ? s.tahminiTutar : -s.tahminiTutar;
+    }
     s.tahminiBakiye = yuruyen;
   }
 

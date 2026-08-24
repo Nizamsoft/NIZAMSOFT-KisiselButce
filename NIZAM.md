@@ -339,6 +339,17 @@ Künyede karşılığı olmayıp uygulama sırasında kullanıcıya sorulan nokt
   Satış ekler.
 - **Satıştaki kâr/zarar gelir sayılmaz.** Yalnız yatırım ekranında ve
   "Bu Ay N'oldu" raporunda gösterilir; Gelirler raporuna girmez.
+- **Nakit akışta kredi kartı borcu bir kez görünür**, en yakın son ödeme
+  gününde. Gelecek aylarda ne kadar kart harcaması olacağı bilinemeyeceği
+  için aynı borcu her ay tekrar yazmak çıkışı olduğundan büyük gösterirdi.
+- **Gerçekleşmiş nakit akış satırları yürüyen bakiyeye ikinci kez eklenmez**;
+  etkileri hesap bakiyesinde zaten vardır.
+- **Yedek dosyası şifresizdir.** Cihazdaki veri PIN'le şifreli durur ama dışa
+  aktarılan JSON düz metindir — başka bir yerde okunabilsin diye. Ayarlar
+  ekranında kullanıcıya dosyayı güvenli tutması söylenir.
+- **Paketler `vendor/js/` altında ve geç yüklenir.** xlsx ve pdfmake toplam
+  3 MB; açılışta değil, ilk gerektiğinde indirilir. Servis işçisi ilk
+  kullanımdan sonra önbelleğe alır, sonrası çevrimdışı çalışır.
 
 ### Sayfa künyeleri
 

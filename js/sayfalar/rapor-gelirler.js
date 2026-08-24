@@ -1,17 +1,11 @@
-/* Nizam Soft · Kişisel Bütçe — Gelirler Raporu ekranı
-   Aşama 1: yalnız başlık ve boş durum. İçerik sonraki aşamalarda gelir. */
+/* Nizam Soft · Kişisel Bütçe — Gelirler Raporu
+   Salt okunur. Ana başlığa dokununca ALT BAŞLIKLARI, alt başlığa dokununca
+   o başlığın hareketleri açılır. Transfer hareketleri bu rapora girmez. */
 
-import { simge } from '../simge.js';
+import { basliklaRaporSayfasi } from './rapor-ortak.js';
 
 export default {
   baslik: 'Gelirler Raporu',
   simge: 'gelir',
-  ciz(kap) {
-    kap.innerHTML = `
-      <div class="bos-durum">
-        ${simge('gelir', 'simge-40')}
-        <h3>Gelir kaydı yok</h3>
-        <p>Hareketlere gelir başlığı atadıkça bu rapor ay ay dolacak.</p>
-      </div>`;
-  },
+  ciz: basliklaRaporSayfasi('Gelir'),
 };
