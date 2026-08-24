@@ -13,9 +13,8 @@
  * Şifreleme tarayıcının kendi Web Crypto'suyladır; paket kullanılmaz.
  */
 
-const VERITABANI = 'nizam-butce';
-const VT_SURUM = 1;
-const DEPO = 'kilit';
+import { islem, KILIT_DEPOSU } from './veri/db.js';
+
 const KAYIT_ID = 'kilit';
 
 export const PIN_UZUNLUK = 6;
@@ -97,34 +96,14 @@ async function coz(paket, metin) {
 }
 
 /* ------------------------------------------------------------ IndexedDB */
-
-function veritabaniAc() {
-  return new Promise((tamam, hata) => {
-    const istek = indexedDB.open(VERITABANI, VT_SURUM);
-    istek.onupgradeneeded = () => {
-      const vt = istek.result;
-      if (!vt.objectStoreNames.contains(DEPO)) vt.createObjectStore(DEPO, { keyPath: 'id' });
-    };
-    istek.onsuccess = () => tamam(istek.result);
-    istek.onerror = () => hata(istek.error);
-  });
-}
+/* Bağlantı ve sürüm veri/db.js'te; burada yalnız kilit kaydı okunup yazılır. */
 
 function kayitOku() {
-  return veritabaniAc().then(vt => new Promise((tamam, hata) => {
-    const istek = vt.transaction(DEPO, 'readonly').objectStore(DEPO).get(KAYIT_ID);
-    istek.onsuccess = () => { vt.close(); tamam(istek.result || null); };
-    istek.onerror = () => { vt.close(); hata(istek.error); };
-  }));
+  return islem(KILIT_DEPOSU, 'readonly', d => d.get(KAYIT_ID)).then(k => k || null);
 }
 
 function kayitYaz(kayit) {
-  return veritabaniAc().then(vt => new Promise((tamam, hata) => {
-    const islem = vt.transaction(DEPO, 'readwrite');
-    islem.objectStore(DEPO).put(kayit);
-    islem.oncomplete = () => { vt.close(); tamam(true); };
-    islem.onerror = () => { vt.close(); hata(islem.error); };
-  }));
+  return islem(KILIT_DEPOSU, 'readwrite', d => d.put(kayit)).then(() => true);
 }
 
 /* ------------------------------------------------------------------ genel */

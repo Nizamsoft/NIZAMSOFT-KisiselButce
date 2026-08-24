@@ -1,0 +1,332 @@
+/* Nizam Soft · Kişisel Bütçe — liste ve tablo
+   Yoğunluk sıkışık: satır 34px, kart içi boşluk 10px.
+   Tablo satırı yatay çizgi; dikey çizgi yok. İlk sütun kalın ve yapışık.
+   Telefonda (900px altı) tablo gizlenir, her kayıt iki satırlık karta döner. */
+
+.liste-arac {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 4px;
+}
+.liste-arac-sol { flex: 1 1 auto; font-size: 13px; color: var(--metin-silik); }
+.liste-arac-sag { display: flex; gap: 2px; }
+
+.liste-arama { margin-bottom: 8px; }
+
+/* Filtre: düğmeye basınca üstten inen panel */
+.liste-filtre {
+  margin-bottom: 8px;
+  padding: 10px;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: var(--kose);
+  box-shadow: var(--golge-kart);
+}
+.liste-filtre .alan:last-child { margin-bottom: 0; }
+
+.liste-devam {
+  padding: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--metin-silik);
+}
+
+/* ---------------------------------------------------------- tablo (≥900px) */
+.tablo-kutu { display: none; }
+
+@media (min-width: 900px) {
+  .tablo-kutu {
+    display: block;
+    overflow-x: auto;
+    background: var(--yuzey);
+    border: 1px solid var(--cizgi);
+    border-radius: var(--kose);
+    box-shadow: var(--golge-kart);
+  }
+  .kart-liste { display: none; }
+}
+
+.tablo {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.tablo th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0 10px;
+  height: var(--satir-yukseklik);
+  background: var(--yuzey);
+  border-bottom: 1px solid var(--cizgi);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--metin-silik);
+  text-align: left;
+  white-space: nowrap;
+}
+.tablo td {
+  padding: 0 10px;
+  height: var(--satir-yukseklik);
+  border-bottom: 1px solid var(--cizgi);   /* yalnız yatay çizgi */
+  color: var(--metin-soft);
+  white-space: nowrap;
+}
+.tablo tbody tr:last-child td { border-bottom: none; }
+.tablo tbody tr:hover td { background: var(--arka-plan); }
+.tablo .sag { text-align: right; }
+
+/* İlk sütun kalın yazılır ve yatay kaydırmada yapışık kalır */
+.tablo .ilk-sutun {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--yuzey);
+  font-weight: 600;
+  color: var(--metin);
+}
+.tablo thead .ilk-sutun { z-index: 3; }
+.tablo tbody tr:hover .ilk-sutun { background: var(--arka-plan); }
+
+/* -------------------------------------------------- kart listesi (<900px) */
+.kart-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: var(--kose);
+  box-shadow: var(--golge-kart);
+  overflow: hidden;
+}
+.kart-satir {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 7px var(--kart-bosluk);
+  border-bottom: 1px solid var(--cizgi);
+  cursor: pointer;
+}
+.kart-satir:last-child { border-bottom: none; }
+.kart-satir:active { background: var(--arka-plan); }
+.kart-satir-govde { flex: 1 1 auto; min-width: 0; }
+.kart-satir-ust {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--metin);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kart-satir-alt {
+  font-size: 12px;
+  color: var(--metin-silik);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kart-satir-sag {
+  flex: none;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ ağaç liste */
+.agac-alt { display: none; }
+.agac-acik + .agac-alt, .agac-alt.acik { display: block; }
+.agac-ok {
+  display: inline-flex;
+  transition: transform var(--gecis-sure) ease;
+}
+.agac-acik .agac-ok { transform: rotate(90deg); }
+.agac-girinti { padding-left: 26px; }
+
+/* ------------------------------------------------------------------ panel */
+/* Sayaç düzeni: 3'lü ızgara — üstte küçük gri etiket, altta büyük kalın sayı */
+.sayac-izgara {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sayac {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 44px;
+  min-width: 0;          /* ızgara öğesi içeriğinden küçülebilsin, taşmasın */
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--yazi-metin);
+}
+.sayac-etiket {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--metin-silik);
+  line-height: 1.25;
+}
+.sayac-deger {
+  font-family: var(--yazi-baslik);
+  /* Üç sayaç yan yana durur; yazı boyu dar ekrana göre küçülür. */
+  font-size: clamp(12px, 3.7vw, 17px);
+  font-weight: 700;
+  color: var(--metin);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 430px) {
+  .sayac-izgara { gap: 6px; }
+  .sayac { padding: 8px; }
+  .sayac-etiket { font-size: 10px; }
+}
+@media (min-width: 900px) {
+  .sayac-deger { font-size: 20px; }
+}
+
+.uyari-kart {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 12px;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--yazi-metin);
+  font-size: 13px;
+}
+.uyari-kart .simge { color: var(--tehlike); }
+.uyari-kart b { display: block; color: var(--metin); }
+.uyari-kart .silik { display: block; font-size: 12px; }
+
+.panel-not { margin: 0 0 12px; font-size: 13px; }
+.panel-grafik { padding: 14px; }
+.panel-grafik-baslik {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+
+.grafik {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 20px;
+  align-items: end;
+  min-height: 170px;
+}
+.grafik-ay { display: flex; flex-direction: column; gap: 8px; }
+.grafik-cubuklar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  height: 130px;
+}
+.grafik-cubuk {
+  width: 30px;
+  min-height: 3px;
+  border-radius: 4px 4px 0 0;
+}
+.grafik-cubuk.gelir { background: var(--basari); }
+.grafik-cubuk.gider { background: var(--tehlike); }
+.grafik-etiket {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--metin);
+}
+.grafik-tutar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.grafik-tutar .arti { color: var(--basari); }
+.grafik-tutar .eksi { color: var(--tehlike); }
+.grafik-anahtar {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--metin-silik);
+}
+.nokta {
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin-right: 5px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+.nokta.gelir { background: var(--basari); }
+.nokta.gider { background: var(--tehlike); }
+
+.panel-alt-dugme { width: 100%; margin-top: 12px; }
+
+/* Yükleme: üstte ince ilerleme çubuğu; içerik yerinde kalır */
+.yukleniyor { height: 3px; background: var(--cizgi); border-radius: 999px; overflow: hidden; }
+.yukleniyor-cubuk {
+  width: 40%; height: 100%;
+  background: var(--degrade-vurgu);
+  animation: yukleniyor-kay 1s ease-in-out infinite;
+}
+@keyframes yukleniyor-kay {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+/* Hesap satırı */
+.hesap-simge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px; height: 34px;
+  border-radius: var(--kose);
+  background: var(--arka-plan);
+  color: var(--metin-soft);
+}
+.kart-satir-sag .eksi, .kart-satir-sag.eksi { color: var(--tehlike); }
+.kart-satir-sag .arti { color: var(--basari); }
+.borc-not, .kar-not { display: block; font-size: 11px; font-weight: 500; }
+
+/* Hareket ekranının üstündeki hesap özeti */
+.hesap-ozet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.hesap-ozet h2 { font-size: 16px; }
+.hesap-ozet .silik { font-size: 12px; }
+.hesap-ozet-bakiye { text-align: right; }
+.hesap-ozet-bakiye b {
+  display: block;
+  font-family: var(--yazi-baslik);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.hesap-ozet-bakiye.eksi b { color: var(--tehlike); }
+.hesap-eylem { width: 100%; margin-bottom: 12px; }
+@media (min-width: 900px) {
+  .hesap-eylem { width: auto; }
+}
+
+/* Ağaç: ana başlık satırı ve altları */
+.agac-ana { cursor: pointer; }
+.agac-alt { list-style: none; margin: 0; padding: 0; background: var(--arka-plan); }
+.agac-alt .kart-satir { min-height: 40px; }
+.alt-baslik { font-weight: 500; font-size: 13px; color: var(--metin-soft); }
+.limit-yok { font-size: 12px; font-weight: 500; }

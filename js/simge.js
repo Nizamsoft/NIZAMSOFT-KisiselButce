@@ -10,6 +10,7 @@ const YOLLAR = {
   ayarlar:    '<path d="M12.2 2h-.4a2 2 0 0 0-2 2 2 2 0 0 1-3 1.7l-.3-.2a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.3.2a2 2 0 0 1 0 3.4l-.3.2a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.3-.2a2 2 0 0 1 3 1.7 2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2 2 2 0 0 1 3-1.7l.3.2a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.3-.2a2 2 0 0 1 0-3.4l.3-.2a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.3.2a2 2 0 0 1-3-1.7 2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/>',
   arti:       '<path d="M12 5v14M5 12h14" fill="none"/>',
   geri:       '<path d="m15 18-6-6 6-6" fill="none"/>',
+  sagOk:      '<path d="m9 18 6-6-6-6" fill="none"/>',
   yardim:     '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01" fill="none"/>',
   kilit:      '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" fill="none"/>',
   banka:      '<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2 2 8h20Z"/>',
@@ -24,6 +25,8 @@ const YOLLAR = {
   kisi:       '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0" fill="none"/>',
   takvim:     '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" fill="none"/>',
   ara:        '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3" fill="none"/>',
+  kart:       '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20" fill="none"/>',
+  filtre:     '<path d="M22 3H2l8 9.5V19l4 2v-8.5Z"/>',
   butce:      '<path d="M12 2a10 10 0 1 0 10 10H12Z"/><path d="M15 2a7 7 0 0 1 7 7h-7Z"/>',
 };
 

@@ -7,7 +7,7 @@
  * şifreli durur. Burada yalnız uygulamanın kendisi (kabuk) tutulur.
  */
 
-const SURUM = '2026.1';
+const SURUM = '2026.2';
 const ONBELLEK = 'nizam-butce-' + SURUM;
 
 const KABUK = [
@@ -24,6 +24,7 @@ const KABUK = [
   './css/temel.css',
   './css/bilesen.css',
   './css/kabuk.css',
+  './css/liste.css',
   './js/app.js',
   './js/kabuk.js',
   './js/giris.js',
@@ -31,6 +32,13 @@ const KABUK = [
   './js/simge.js',
   './js/surum.js',
   './js/yonlendirici.js',
+  './js/liste.js',
+  './js/veri/db.js',
+  './js/veri/vt.js',
+  './js/veri/tablolar.js',
+  './js/veri/bicim.js',
+  './js/veri/hazir.js',
+  './js/veri/hesap.js',
   './js/sayfalar/kayit.js',
   './js/sayfalar/panel.js',
   './js/sayfalar/hesaplar.js',
@@ -48,6 +56,7 @@ const KABUK = [
   './js/sayfalar/ayarlar.js',
   './js/sayfalar/gelir-basliklari.js',
   './js/sayfalar/gider-basliklari.js',
+  './js/sayfalar/basliklar.js',
   './js/sayfalar/rutin-hareketler.js',
 ];
 
