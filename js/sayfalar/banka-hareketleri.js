@@ -7,7 +7,7 @@ import { git, geriDon, cozumle } from '../yonlendirici.js';
 import { hesapDuzenle, hareketEkle, hareketDetay } from '../kayitlar.js';
 import * as vt from '../veri/vt.js';
 import { liste } from '../liste.js';
-import { yuruyenBakiyeliListe, guncelBakiye } from '../veri/hesap.js';
+import { yuruyenBakiyeliListe, guncelBakiye, yatirimTurHaritasi } from '../veri/hesap.js';
 import { para, paraSimgeli, tarih, kacir } from '../veri/bicim.js';
 
 function tutarHucre(k) {
@@ -34,25 +34,27 @@ export default {
       return;
     }
 
-    const [hareketler, gelirB, giderB, hesaplar] = await Promise.all([
+    const [hareketler, gelirB, giderB, hesaplar, yatirimTurleri] = await Promise.all([
       vt.hepsi('bankaHareketleri'), vt.hepsi('gelirBasliklari'),
-      vt.hepsi('giderBasliklari'), vt.hepsi('bankaHesaplari'),
+      vt.hepsi('giderBasliklari'), vt.hepsi('bankaHesaplari'), yatirimTurHaritasi(),
     ]);
 
     const baslikAdi = new Map([...gelirB, ...giderB].map(b => [b.id, b.baslikAdi]));
     const hesapAdi = new Map(hesaplar.map(h => [h.id, h.hesapAdi]));
 
-    const satirlar = yuruyenBakiyeliListe(hesap, hareketler)
+    const satirlar = yuruyenBakiyeliListe(hesap, hareketler, yatirimTurleri)
       .reverse()                                  // en yeni üstte
       .map(h => ({
         ...h,
         baslik: h.yon === 'Transfer'
-          ? (hesapAdi.get(h.hesap === hesap.id ? h.karsiHesap : h.hesap) || 'Transfer')
+          ? (h.bagliYatirimIslemi
+              ? 'Yatırım'
+              : hesapAdi.get(h.hesap === hesap.id ? h.karsiHesap : h.hesap) || 'Transfer')
           : (baslikAdi.get(h.gelirBasligi || h.giderBasligi) || 'Başlıksız'),
       }));
 
     const kartMi = hesap.hesapTuru === 'Kredi Kartı';
-    const bakiye = guncelBakiye(hesap, hareketler);
+    const bakiye = guncelBakiye(hesap, hareketler, yatirimTurleri);
 
     kap.innerHTML = `
       <div class="kart kart-serit hesap-ozet">

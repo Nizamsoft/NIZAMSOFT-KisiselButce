@@ -186,3 +186,8 @@
 .yatirim-ozet { margin-bottom: 12px; padding: 4px 12px; }
 .yatirim-ozet .arti { color: var(--basari); }
 .yatirim-ozet .eksi { color: var(--tehlike); }
+
+/* Yatırım penceresindeki canlı toplam */
+.yatirim-toplam { margin-top: 12px; padding: 4px 12px; }
+.yatirim-toplam .satir-cift:last-child { border-bottom: none; }
+.yatirim-toplam dd b { font-family: var(--yazi-baslik); font-size: 15px; }

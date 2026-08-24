@@ -327,6 +327,19 @@ konuşularak alınmıştır; tahmin değil karardır.
   dosyasına dışa aktarıp aynı dosyadan geri yükleyerek alınır. Bütün tutarlar
   ₺ TRY, binlik nokta ondalık virgül (12.400,00); tarihler 22.05.2025 · 14:30.
 
+### Sonradan netleşen kararlar
+
+Künyede karşılığı olmayıp uygulama sırasında kullanıcıya sorulan noktalar:
+
+- **Yatırım alımı gider sayılmaz.** 50.000 TL'nin 30.000'iyle altın alındığında
+  para harcanmamış, yer değiştirmiştir; toplam varlık değişmez. Bu yüzden
+  oluşan banka hareketi **Yön = Transfer**'dir, **Karşı Hesap boştur** ve
+  **Bağlı Yatırım İşlemi** doludur. Gider raporuna girmez. Hareketin yönü
+  (para çıkışı mı girişi mi) bağlı işlemin türünden okunur: Alış çıkarır,
+  Satış ekler.
+- **Satıştaki kâr/zarar gelir sayılmaz.** Yalnız yatırım ekranında ve
+  "Bu Ay N'oldu" raporunda gösterilir; Gelirler raporuna girmez.
+
 ### Sayfa künyeleri
 
 #### Panel

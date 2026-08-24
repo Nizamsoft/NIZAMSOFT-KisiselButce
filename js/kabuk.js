@@ -6,7 +6,7 @@ import { simge } from './simge.js';
 import { GEZINME, EKLE_MENUSU } from './sayfalar/kayit.js';
 import { git, geriDon, cozumle, suAnki } from './yonlendirici.js';
 import { FIRMA_ADI, UYGULAMA_ADI } from './surum.js';
-import { hareketEkle, abonelikDuzenle } from './kayitlar.js';
+import { hareketEkle, abonelikDuzenle, yatirimIslemiEkle } from './kayitlar.js';
 import { bildir } from './pencere.js';
 
 let menuAcik = false;
@@ -136,7 +136,7 @@ function menuIsi(anahtar) {
   if (anahtar === 'gelir') hareketEkle({ yon: 'Gelir' }, yenile);
   else if (anahtar === 'gider') hareketEkle({ yon: 'Gider' }, yenile);
   else if (anahtar === 'abonelik') abonelikDuzenle(null, yenile);
-  else if (anahtar === 'yatirim') git('/hesaplar?sekme=yatirimlar');
+  else if (anahtar === 'yatirim') yatirimIslemiEkle(null, yenile);
   else if (anahtar === 'ekstre') ekstreyeGit();
 }
 

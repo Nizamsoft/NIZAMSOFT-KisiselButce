@@ -7,15 +7,30 @@
  *
  * Kredi kartı bakiyesi eksi durur: harcama borcu artırır (daha eksi),
  * bankadan karta yapılan ödeme Transfer olduğu için borcu azaltır.
+ *
+ * Yatırım alışı ve satışı da Transfer'dir ama karşı hesabı yoktur — para
+ * hesaptan çıkıp yatırıma döner (ya da tersi). Böylece harcanmadığı için
+ * gider raporuna GİRMEZ; yönü bağlı yatırım işleminin türünden okunur.
  */
 
 import * as vt from './vt.js';
 
 export const NAKITE_SAYILAN = ['Banka Hesabı', 'Nakit Cüzdan'];
 
-/** Bir hareketin verilen hesap üstündeki etkisi. */
-export function etki(hareket, hesapId) {
+/**
+ * Bir hareketin verilen hesap üstündeki etkisi.
+ * @param {Map<string,string>} [yatirimTurleri] işlem id → 'Alış' | 'Satış'
+ */
+export function etki(hareket, hesapId, yatirimTurleri) {
   const tutar = Number(hareket.tutar) || 0;
+
+  /* Yatırıma giden / yatırımdan gelen para: karşı hesabı yok. */
+  if (hareket.yon === 'Transfer' && hareket.bagliYatirimIslemi && !hareket.karsiHesap) {
+    if (hareket.hesap !== hesapId) return 0;
+    const tur = yatirimTurleri?.get(hareket.bagliYatirimIslemi);
+    return tur === 'Satış' ? tutar : -tutar;
+  }
+
   if (hareket.hesap === hesapId) {
     if (hareket.yon === 'Gelir') return tutar;
     return -tutar;                       // Gider ve Transfer: hesaptan çıkar
@@ -24,23 +39,30 @@ export function etki(hareket, hesapId) {
   return 0;
 }
 
+/** Yatırım işlemlerinin türünü id'ye göre verir (alış mı satış mı). */
+export async function yatirimTurHaritasi() {
+  const islemler = await vt.hepsi('yatirimIslemleri');
+  return new Map(islemler.map(i => [i.id, i.islemTuru]));
+}
+
 /** Hesabın güncel bakiyesi: devir + bütün hareketlerin etkisi. */
-export function guncelBakiye(hesap, hareketler) {
-  return hareketler.reduce((t, h) => t + etki(h, hesap.id), Number(hesap.devirBakiye) || 0);
+export function guncelBakiye(hesap, hareketler, yatirimTurleri) {
+  return hareketler.reduce(
+    (t, h) => t + etki(h, hesap.id, yatirimTurleri), Number(hesap.devirBakiye) || 0);
 }
 
 /**
  * Bir hesabın hareketlerini tarih sırasına dizip her satıra yürüyen bakiye
  * yazar. Bakiye devir tutarından başlar.
  */
-export function yuruyenBakiyeliListe(hesap, hareketler) {
+export function yuruyenBakiyeliListe(hesap, hareketler, yatirimTurleri) {
   const ilgili = hareketler
     .filter(h => h.hesap === hesap.id || (h.yon === 'Transfer' && h.karsiHesap === hesap.id))
     .sort((a, b) => (a.tarih || '').localeCompare(b.tarih || '') || (a.id > b.id ? 1 : -1));
 
   let bakiye = Number(hesap.devirBakiye) || 0;
   return ilgili.map(h => {
-    const d = etki(h, hesap.id);
+    const d = etki(h, hesap.id, yatirimTurleri);
     bakiye += d;
     return { ...h, etkiTutar: d, yuruyenBakiye: bakiye };
   });
@@ -48,12 +70,12 @@ export function yuruyenBakiyeliListe(hesap, hareketler) {
 
 /** Bütün hesapların güncel bakiyesini {hesapId: tutar} olarak verir. */
 export async function bakiyeler() {
-  const [hesaplar, hareketler] = await Promise.all([
-    vt.hepsi('bankaHesaplari'), vt.hepsi('bankaHareketleri'),
+  const [hesaplar, hareketler, yatirimTurleri] = await Promise.all([
+    vt.hepsi('bankaHesaplari'), vt.hepsi('bankaHareketleri'), yatirimTurHaritasi(),
   ]);
   const cikti = {};
-  for (const h of hesaplar) cikti[h.id] = guncelBakiye(h, hareketler);
-  return { hesaplar, hareketler, bakiye: cikti };
+  for (const h of hesaplar) cikti[h.id] = guncelBakiye(h, hareketler, yatirimTurleri);
+  return { hesaplar, hareketler, yatirimTurleri, bakiye: cikti };
 }
 
 /* -------------------------------------------------------------- yatırım */
@@ -63,7 +85,10 @@ export async function portfoy() {
   const [araclar, islemler] = await Promise.all([
     vt.hepsi('yatirimAraclari'), vt.hepsi('yatirimIslemleri'),
   ]);
-  const sirali = [...islemler].sort((a, b) => (a.tarih || '').localeCompare(b.tarih || ''));
+  /* Aynı güne düşen işlemler giriş sırasına göre işlenmeli; kimlik zaman
+     sıralı olduğu için eşitlikte ona bakılır. */
+  const sirali = [...islemler].sort((a, b) =>
+    (a.tarih || '').localeCompare(b.tarih || '') || String(a.id).localeCompare(String(b.id)));
 
   const durum = new Map();   // aracId → {adet, maliyet}
   for (const i of sirali) {
@@ -249,9 +274,9 @@ function rutinTarihleri(rutin, bas, bit) {
  * Gerçekleşen banka hareketiyle eşleşen satır "Gerçekleşti" olur.
  */
 export async function nakitAkis(ayIleri = 6) {
-  const [rutinler, abonelikler, hesaplar, hareketler] = await Promise.all([
+  const [rutinler, abonelikler, hesaplar, hareketler, yatirimTurleri] = await Promise.all([
     vt.hepsi('rutinHareketler'), vt.hepsi('abonelikler'),
-    vt.hepsi('bankaHesaplari'), vt.hepsi('bankaHareketleri'),
+    vt.hepsi('bankaHesaplari'), vt.hepsi('bankaHareketleri'), yatirimTurHaritasi(),
   ]);
 
   const bugunT = new Date(); bugunT.setHours(0, 0, 0, 0);
@@ -282,7 +307,7 @@ export async function nakitAkis(ayIleri = 6) {
   }
 
   for (const k of hesaplar.filter(h => h.hesapTuru === 'Kredi Kartı' && h.durum === 'Aktif' && h.sonOdemeGunu)) {
-    const borc = Math.abs(Math.min(0, guncelBakiye(k, hareketler)));
+    const borc = Math.abs(Math.min(0, guncelBakiye(k, hareketler, yatirimTurleri)));
     for (let t = new Date(bas); t <= bit; t.setMonth(t.getMonth() + 1)) {
       const gun = ayinGunu(t.getFullYear(), t.getMonth(), Number(k.sonOdemeGunu));
       if (gun < bas || gun > bit) continue;
@@ -319,7 +344,7 @@ export async function nakitAkis(ayIleri = 6) {
   /* Tahmini bakiye: bugünkü nakit varlıktan başlayıp satır satır yürür. */
   const nakit = hesaplar
     .filter(h => NAKITE_SAYILAN.includes(h.hesapTuru) && h.durum === 'Aktif')
-    .reduce((t, h) => t + guncelBakiye(h, hareketler), 0);
+    .reduce((t, h) => t + guncelBakiye(h, hareketler, yatirimTurleri), 0);
   let yuruyen = nakit;
   for (const s of satirlar) {
     const tutar = s.gerceklesenTutar ?? s.tahminiTutar;

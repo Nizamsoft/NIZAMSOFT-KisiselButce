@@ -7,7 +7,7 @@
  * şifreli durur. Burada yalnız uygulamanın kendisi (kabuk) tutulur.
  */
 
-const SURUM = '2026.3';
+const SURUM = '2026.4';
 const ONBELLEK = 'nizam-butce-' + SURUM;
 
 const KABUK = [

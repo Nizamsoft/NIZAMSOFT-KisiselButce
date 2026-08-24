@@ -3,7 +3,7 @@
 
 import { simge } from '../simge.js';
 import { git, suAnki, cozumle } from '../yonlendirici.js';
-import { hesapDuzenle, abonelikDuzenle } from '../kayitlar.js';
+import { hesapDuzenle, abonelikDuzenle, yatirimIslemiEkle } from '../kayitlar.js';
 import * as vt from '../veri/vt.js';
 import { bakiyeler, portfoy } from '../veri/hesap.js';
 import { paraSimgeli, para, karsilastir, kacir } from '../veri/bicim.js';
@@ -103,14 +103,17 @@ async function cizBanka(kap) {
 /* ------------------------------------------------------------- yatırımlar */
 
 async function cizYatirimlar(kap) {
+  const yenile = () => cozumle();
   const satirlar = await portfoy();
   if (!satirlar.length) {
     kap.innerHTML = bosDurum('yatirim', 'Yatırım yok',
       'Altın, döviz ya da hisse aldığında elindekiler burada araç araç görünür.', 'Yatırım ekle');
+    kap.querySelector('[data-yeni]').addEventListener('click', () => yatirimIslemiEkle(null, yenile));
     return;
   }
 
   kap.innerHTML = `
+    ${ekleSeridi('Yatırım ekle')}
     <ul class="kart-liste">
       ${satirlar.map(s => `
         <li class="kart-satir" data-arac="${kacir(s.id)}" tabindex="0">
@@ -131,6 +134,7 @@ async function cizYatirimlar(kap) {
         </li>`).join('')}
     </ul>`;
 
+  kap.querySelector('[data-yeni]').addEventListener('click', () => yatirimIslemiEkle(null, yenile));
   kap.querySelectorAll('[data-arac]').forEach(oge => {
     oge.addEventListener('click', () => git('/yatirimlar/islemler/' + oge.dataset.arac));
   });

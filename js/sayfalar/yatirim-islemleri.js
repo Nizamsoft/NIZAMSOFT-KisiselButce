@@ -3,7 +3,8 @@
    elde kalan adet ve kâr/zarar hesaplanır. */
 
 import { simge } from '../simge.js';
-import { geriDon } from '../yonlendirici.js';
+import { geriDon, cozumle } from '../yonlendirici.js';
+import { yatirimIslemiEkle } from '../kayitlar.js';
 import * as vt from '../veri/vt.js';
 import { liste } from '../liste.js';
 import { portfoy } from '../veri/hesap.js';
@@ -66,7 +67,16 @@ export default {
           </dl>
         </div>` : ''}
 
+      <div class="liste-arac">
+        <div class="liste-arac-sol"></div>
+        <button class="dugme dugme-sade dugme-kucuk" type="button" id="islem-ekle">
+          ${simge('arti')}<span>Alış / satış ekle</span></button>
+      </div>
       <div id="islem-liste"></div>`;
+
+    const yenile = () => cozumle();
+    kap.querySelector('#islem-ekle')
+       .addEventListener('click', () => yatirimIslemiEkle({ arac: arac.id }, yenile));
 
     liste(kap.querySelector('#islem-liste'), {
       kayitlar: satirlar,
@@ -76,8 +86,9 @@ export default {
       ozet: g => `${g.length} işlem`,
       bos: {
         baslik: 'Bu araçta işlem yok',
-        yazi: 'Bu yatırım aracıyla yaptığın alış ve satışlar burada listelenir. '
-            + 'Yatırım, bir banka hareketine "Yatırım" denerek girilir.',
+        yazi: 'Bu yatırım aracıyla yaptığın alış ve satışlar burada listelenir.',
+        dugme: 'Alış / satış ekle',
+        dugmeIslev: () => yatirimIslemiEkle({ arac: arac.id }, yenile),
       },
       sutunlar: [
         { ad: 'Tarih', as: 'tarih', ciz: k => kacir(tarih(k.tarih)), telefonda: 'alt' },

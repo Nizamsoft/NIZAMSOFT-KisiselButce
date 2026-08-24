@@ -73,8 +73,13 @@ export async function sayi(tablo) {
 
 /* -------------------------------------------------------------- yazma */
 
+/**
+ * Kayıt kimliği. Başına oluşturulma anı yazılır ki kimlikler zaman sırasına
+ * dizilsin: aynı güne düşen iki yatırım işleminin hangisinin önce girildiği
+ * ancak böyle bilinir (kayıt sırası ayrı bir alanda tutulmuyor).
+ */
 function yeniId() {
-  return crypto.randomUUID();
+  return Date.now().toString(36).padStart(9, '0') + '-' + crypto.randomUUID();
 }
 
 /** Yeni kayıt ekler, id'sini döndürür. */

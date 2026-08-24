@@ -13,7 +13,8 @@ import * as vt from './veri/vt.js';
 import { form } from './form.js';
 import { pencereAc, onayla, bildir } from './pencere.js';
 import { simge } from './simge.js';
-import { para, paraSimgeli, tarih, tarihSaat, bugun, karsilastir, kacir } from './veri/bicim.js';
+import { para, paraSimgeli, paraCoz, tarih, tarihSaat, bugun, karsilastir, kacir } from './veri/bicim.js';
+import { portfoy } from './veri/hesap.js';
 
 /** İlişki alanı için seçenek listesi. */
 async function secenekler(tablo, adAlani, suz = () => true) {
@@ -452,4 +453,114 @@ export async function hareketDetay(id, sonra) {
     kapat();
     hareketDuzenle(id, sonra);
   });
+}
+
+/* ------------------------------------------------------- yatırım işlemleri */
+
+/**
+ * Yatırım alış/satış kaydı. Karar gereği yatırım alımı GİDER SAYILMAZ:
+ * para harcanmaz, yatırıma döner. Bu yüzden oluşan banka hareketi Transfer'dir
+ * ve karşı hesabı yoktur; yönü işlem türünden okunur, gider raporuna girmez.
+ * Satıştaki kâr/zarar da gelir sayılmaz, yalnız gösterilir.
+ */
+export async function yatirimIslemiEkle(onSecili, sonra) {
+  const [araclar, hesaplar, varliklar] = await Promise.all([
+    secenekler('yatirimAraclari', 'aracAdi'),
+    secenekler('bankaHesaplari', 'hesapAdi'),
+    portfoy(),
+  ]);
+  if (!hesaplar.length) { bildir('Önce bir hesap tanımlaman gerek.', 'tehlike'); return; }
+  if (!araclar.length) { bildir('Önce bir yatırım aracı tanımlaman gerek.', 'tehlike'); return; }
+
+  const eldeki = new Map(varliklar.map(v => [v.id, v]));
+  const aracBirimi = new Map((await vt.hepsi('yatirimAraclari')).map(a => [a.id, a.birim]));
+
+  const govde = form({
+    deger: {
+      islemTuru: 'Alış', tarih: bugun(),
+      yatirimAraci: onSecili?.arac || araclar[0].id,
+      hesap: onSecili?.hesap || hesaplar[0].id,
+    },
+    kaydetYazisi: 'İşlemi kaydet',
+    alanlar: [
+      { ad: 'İşlem Türü', as: 'islemTuru', tur: 'Seçenek', zorunlu: true, degerler: ['Alış', 'Satış'] },
+      { ad: 'Tarih', as: 'tarih', tur: 'Tarih', zorunlu: true },
+      { ad: 'Yatırım Aracı', as: 'yatirimAraci', tur: 'İlişki', zorunlu: true, secenekler: araclar },
+      { ad: 'Adet', as: 'adet', tur: 'Sayı', zorunlu: true,
+        ipucu: 'Küsuratlı olabilir: 0,5 gram · 12,75 dolar' },
+      { ad: 'Birim Fiyat', as: 'birimFiyat', tur: 'Para', zorunlu: true,
+        ipucu: 'Bu fiyat aracın güncel fiyatı olarak da kaydedilir.' },
+      { ad: 'Hesap', as: 'hesap', tur: 'İlişki', zorunlu: true, secenekler: hesaplar,
+        ipucu: 'Alışta paranın çıkacağı, satışta gireceği hesap.' },
+    ],
+    /* Tutar elle girilmez; adet × birim fiyat olarak hesaplanıp gösterilir. */
+    degisince(d, kok) {
+      const adet = paraCoz(d.adet) || 0;
+      const fiyat = paraCoz(d.birimFiyat) || 0;
+      const tutar = Math.round(adet * fiyat * 100) / 100;
+      const birim = aracBirimi.get(d.yatirimAraci) || '';
+      const durum = eldeki.get(d.yatirimAraci);
+      let kutu = kok.querySelector('#yatirim-toplam');
+      if (!kutu) {
+        kutu = document.createElement('div');
+        kutu.id = 'yatirim-toplam';
+        kutu.className = 'kart kart-serit yatirim-toplam';
+        kok.querySelector('#form-alanlar').after(kutu);
+      }
+      kutu.innerHTML = `
+        <div class="satir-cift"><dt>Toplam tutar</dt>
+          <dd><b>${kacir(paraSimgeli(tutar))}</b></dd></div>
+        ${d.islemTuru === 'Satış' ? `
+          <div class="satir-cift"><dt>Elde kalan</dt>
+            <dd>${durum ? kacir(para(durum.eldeKalanAdet)) + ' ' + kacir(birim) : '0 ' + kacir(birim)}</dd></div>` : ''}`;
+    },
+    async kaydet(d) {
+      const adet = d.adet;
+      const fiyat = d.birimFiyat;
+      if (adet <= 0) throw new Error('Adet sıfırdan büyük olmalı.');
+      if (fiyat <= 0) throw new Error('Birim fiyat sıfırdan büyük olmalı.');
+
+      const tutar = Math.round(adet * fiyat * 100) / 100;
+      const durum = eldeki.get(d.yatirimAraci);
+      const birim = aracBirimi.get(d.yatirimAraci) || '';
+
+      let karZarar = null;
+      if (d.islemTuru === 'Satış') {
+        const elde = durum?.eldeKalanAdet || 0;
+        if (adet > elde + 1e-9) {
+          throw new Error(`Elinde ${para(elde)} ${birim} var; bundan fazlasını satamazsın.`);
+        }
+        karZarar = Math.round((fiyat - (durum?.ortalamaMaliyet || 0)) * adet * 100) / 100;
+      }
+
+      const islemId = await vt.ekle('yatirimIslemleri', {
+        islemTuru: d.islemTuru, tarih: d.tarih, yatirimAraci: d.yatirimAraci,
+        adet, birimFiyat: fiyat, tutar, hesap: d.hesap, karZarar,
+      });
+
+      /* Paranın hesaptan çıkışı / hesaba girişi. Gider değil, transfer. */
+      const arac = await vt.oku('yatirimAraclari', d.yatirimAraci);
+      await vt.ekle('bankaHareketleri', {
+        hesap: d.hesap, tarih: d.tarih,
+        aciklama: `${arac.aracAdi} ${d.islemTuru.toLowerCase()}ı`,
+        tutar, yon: 'Transfer',
+        gelirBasligi: null, giderBasligi: null, karsiHesap: null, dekontNo: null,
+        bagliAbonelik: null, bagliYatirimIslemi: islemId,
+        ekstreYuklemesi: null, girisSekli: 'Elle',
+      });
+
+      /* Yeni işlemin birim fiyatı aracın güncel fiyatı olur. */
+      await vt.guncelle('yatirimAraclari', d.yatirimAraci, {
+        guncelFiyat: fiyat, guncelFiyatTarihi: d.tarih,
+      });
+
+      kapat();
+      bildir(d.islemTuru === 'Alış'
+        ? 'Yatırım alışı kaydedildi.'
+        : `Satış kaydedildi. ${karZarar >= 0 ? 'Kâr' : 'Zarar'}: ${paraSimgeli(Math.abs(karZarar))}`,
+        'basari');
+      sonra?.();
+    },
+  });
+  const { kapat } = pencereAc({ baslik: 'Yeni yatırım işlemi', govde });
 }

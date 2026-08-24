@@ -85,11 +85,16 @@ export function paraCoz(metin) {
   if (!ham) return null;
   let sade;
   if (ham.includes(',')) {
-    sade = ham.replace(/\./g, '').replace(',', '.');   // 12.400,50 → 12400.50
-  } else if ((ham.match(/\./g) || []).length > 1) {
-    sade = ham.replace(/\./g, '');                     // 1.234.567 → 1234567
+    /* Virgül varsa o ondalık ayracıdır, noktalar binliktir: 12.400,50 */
+    sade = ham.replace(/\./g, '').replace(',', '.');
+  } else if (ham.includes('.')) {
+    /* Virgül yok. Noktadan sonraki her öbek tam 3 hane ise nokta binlik
+       ayracıdır (4.000 = dört bin); değilse ondalık noktasıdır (1234.5). */
+    const obekler = ham.split('.');
+    const binlik = obekler.slice(1).every(o => /^\d{3}$/.test(o));
+    sade = binlik ? obekler.join('') : ham;
   } else {
-    sade = ham;                                        // 1234.5 ya da 1234
+    sade = ham;
   }
   const sayi = Number(sade);
   return Number.isFinite(sayi) ? sayi : null;
