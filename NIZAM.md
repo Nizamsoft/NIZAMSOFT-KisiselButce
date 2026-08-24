@@ -46,11 +46,16 @@ Bunlar Nizam Soft standardıdır. Tartışılmaz, değiştirilmez, alternatif
   - Yüklenen belgeler IndexedDB'de saklanır. Uzak depolama yok.
 - **Giriş: Yok**
   - Giriş ekranı, kayıt ekranı ve şifre yoktur. Uygulama açılır açılmaz kullanılır.
-- **Yedek: Dosyaya dışa ve içe aktarma**
-  - Bütün veri tek dosyaya dışa aktarılır, aynı dosyadan geri yüklenir.
+- **Yedek: JSON dosyası**
+  - Bütün veri tek JSON dosyasına dışa aktarılır, aynı dosyadan geri yüklenir.
     Veri cihazda durduğu için yedeği kullanıcı alır.
-- **Paketler: Yok**
-  - Excel gerekiyorsa xlsx. Başka paket eklemeden önce sor.
+  - Ayrıca isteğe bağlı Excel dışa aktarım vardır; o yalnız okumak içindir,
+    geri yüklenmez.
+- **Paketler: İki tane**
+  - `xlsx` (SheetJS) — banka ekstresini okumak ve isteğe bağlı Excel dışa aktarım.
+  - `pdfmake` — raporların PDF çıktısı. Türkçe karakterleri tam olan Roboto ile gelir.
+  - İkisi de depoya `vendor/` altına konur ve doğrudan dosyadan yüklenir;
+    paket yöneticisi ve node_modules yok. Başka paket eklemeden önce sor.
 - **Para birimi: ₺ TRY**
   - Binlik nokta, ondalık virgül: 12.400,00
 - **Tarih ve saat: 22.05.2025 · 14:30**
