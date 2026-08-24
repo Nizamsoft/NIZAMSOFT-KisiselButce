@@ -317,7 +317,8 @@ konuşularak alınmıştır; tahmin değil karardır.
   İçe aktar · Yazdır · Dışa aktar · Yüklemeyi geri al — hepsi Yönetici.
 - **Ortak kural:** Tek kişilik kullanım. Sunucu YOKTUR: bütün veri kullanıcının
   cihazındaki IndexedDB'de şifreli durur, dışarı çıkmaz. Giriş 6 haneli yerel
-  PIN iledir. Yazılımcı rolü bu modülde kullanılmaz; roller yalnız arayüzde
+  PIN iledir; PIN her açılışta sorulur ve hiçbir yere gönderilmez.
+  Yazılımcı rolü bu modülde kullanılmaz; roller yalnız arayüzde
   uygulanır, bu bir güvenlik sınırı değildir. Hesaba işlenmiş banka/nakit/kart
   hareketi tek tek SİLİNEMEZ; yalnız başlığı ve açıklaması düzenlenebilir ya da
   ait olduğu ekstre yüklemesi tümüyle geri alınabilir. Tanım listeleri
@@ -627,8 +628,9 @@ yönetildiği ekran.
   listeleri: Gelir Başlıkları, Gider Başlıkları, Yatırım Araçları, Banka
   Hesapları (hesap ve kart tanımları), Bütçe Limitleri, Abonelikler. Aynı
   listeler ilgili sayfadaki ayar ikonuna basınca da açılır. Ayrıca: uygulamayı
-  güncelle düğmesi ve altında sürüm etiketi (YIL.SAYAÇ); PIN değiştirme; YEDEK
-  ALMA — bütün veri tek JSON dosyasına dışa aktarılır ve aynı JSON dosyasından
+  güncelle düğmesi ve altında sürüm etiketi (YIL.SAYAÇ). GÜVENLİK: "PIN Değiştir"
+  ve "Kurtarma Cevabını Değiştir" buradadır; ikisi de veriyi bozmaz, yalnız veri
+  anahtarını yeniden sarar. VERİ: yedek alma — bütün veri tek JSON dosyasına dışa aktarılır ve aynı JSON dosyasından
   geri yüklenir (geri yükleme mevcut veriyi değiştireceği için pencere ile onay
   ister); isteğe bağlı Excel dışa aktarım yalnız okumak içindir, geri
   yüklenmez; ve neyin ne zaman değiştiğini gösteren değişiklik kaydı listesi.
