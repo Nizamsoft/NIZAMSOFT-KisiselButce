@@ -78,7 +78,198 @@ Bunlar Nizam Soft standardıdır. Tartışılmaz, değiştirilmez, alternatif
 
 ## Tasarım kararları
 
-henüz belirlenmedi
+Bu bölümdekiler alınmış kararlardır. Tartışılmaz, değiştirilmez, biçim
+uydurulmaz. Eksik görülen bir şey varsa tahmin edilmez — sorulur.
+
+### Renk ve tipografi
+
+Renkler ve ölçüler **tek yerde** değişken olarak tanımlanır; hiçbir
+ekranda yeniden yazılmaz.
+
+#### Renk değişkenleri
+
+| Değişken | Değer | Nerede |
+|---|---|---|
+| `--arka-plan` | `#f4f5f7` | Sayfa zemini |
+| `--yuzey` | `#ffffff` | Kart, pencere, çubuk, panel |
+| `--cizgi` | `#e1e4e9` | Kenarlık, ayraç, tablo satır çizgisi |
+| `--metin` | `#16181d` | Başlık ve ana metin |
+| `--metin-soft` | `#4a5058` | İkincil metin |
+| `--metin-silik` | `#676e78` | Etiket, ipucu, üçüncül metin |
+| `--vurgu` | `#0e6e8c` | Ana buton, aktif menü, acil işareti |
+| `--vurgu-koyu` | `#0a566e` | Üzerine gelince ve basılınca |
+| `--basari` | `#107c41` | Olumlu durum |
+| `--uyari` | `#a66300` | Uyarı durumu |
+| `--tehlike` | `#ce1b2e` | Hata ve silme |
+
+Vurgu rengi **az kullanılır**: ana buton, aktif menü ve acil işareti.
+Başka hiçbir yerde kullanılmaz.
+
+#### Yazı ve simge
+
+| Değişken | Değer |
+|---|---|
+| `--yazi-baslik` | Manrope — 600–700 ağırlık |
+| `--yazi-metin` | Inter — 400–500 ağırlık |
+
+- **Simge seti:** Lucide
+- **Ton:** Karbon zeminde keskin kesilmiş metalik bir N — soğuk çelik ve
+  grafit tonlarını kırmızı bir kıvılcımla kesen, kurumsal ve teknik bir duruş.
+
+#### Ölçü değişkenleri
+
+Aşağıdaki değerler kararlardan gelir; renkler gibi tek yerde tanımlanır.
+
+| Değişken | Değer | Nerede |
+|---|---|---|
+| `--ust-cubuk-yukseklik` | `44px` | İnce başlık çubuğu |
+| `--kose` | `6px` | Köşe yarıçapı |
+| `--satir-yukseklik` | `34px` | Liste ve tablo satırı (sıkışık) |
+| `--kart-bosluk` | `10px` | Kart içi boşluk (sıkışık) |
+| `--serit-kalinlik` | `3px` | Kartın sol kenarındaki vurgu şeridi |
+| `--dugme-simge` | `16px` | Düğme içindeki simge |
+| `--dugme-simge-bosluk` | `8px` | Simge ile yazı arası |
+| `--icerik-genislik` | `1200px` | Ortalanmış içerik genişliği |
+| `--gecis-sure` | `160ms` | Sayfa geçişi |
+| `--kayma-mesafe` | `8px` | Açılma/kapanmadaki kayma |
+| `--basma-olcek` | `0.985` | Dokunma tepkisinde küçülme |
+| `--soluk-saydamlik` | `0.55` | Seçili olmayanların saydamlığı |
+| `--liste-gecikme` | `40ms` | Liste satırlarının belirme arası |
+
+### Uygulama sırası
+
+Kararlar rastgele uygulanmaz. Sonrakiler öncekilerin üstüne kurulur:
+
+1. **Renk ve bileşen** — Önce malzeme: her ekranda kullanılacak kutu, düğme, simge.
+2. **Uygulama kabuğu** — Her ekranı saran çatı: üst çubuk, gezinme, genişlik.
+3. **Giriş kapısı** — Uygulamaya girerken görülen ilk iki ekran.
+4. **Panel ekranı** — Açılışta karşılayan ekran.
+5. **Liste ekranı** — En çok bakılan ekran ve içindeki her şey.
+6. **Diğer ekranlar** — Kayıt girme, detay, ayarlar ve toplu aktarım.
+7. **Uç durumlar** — Ekran boşken, beklerken ve iş ters gittiğinde.
+8. **Hareket** — Uygulamayı canlandıran katman. Kodda da en son yazılır.
+9. **Sistem** — Güncelleme, tema ve yedek — uygulamanın kendi bakımı.
+
+### Yerleşim
+
+- **Üst çubuk: İnce başlık**
+  - 44px yükseklikte, yalnız sayfa adı ve geri oku.
+- **Logo görünümü: Zeminsiz, altında ad**
+  - Logo kutusuz durur; altında ince ışık çizgisi, onun altında firma adı.
+    Açılışta ve girişte böyle görünür.
+- **Gezinme: Alt + orta +**
+  - Alt sekme şeridi, ortasında yükseltilmiş ekleme düğmesi.
+- **Çubuk ve panel dokusu: Yüzen hap**
+  - Kenarlardan boşluklu, yuvarlak köşeli, gölgeli ada gibi durur.
+- **Sayfa listesi: Üst sekme**
+  - Modülün sayfaları üstte yatay sekme olur.
+- **Yol izi: Geri oku + başlık**
+  - Solda geri oku, yanında sayfa adı. Telefonda en anlaşılır olan.
+- **Kullanıcı menüsü: Sağ üstte çip**
+  - Avatar + ad + rol bir arada; dokununca menü açılır.
+- **Destek ve istek: Üst çubukta**
+  - Üst çubukta soru işareti düğmesi; basınca istek penceresi.
+- **Sayaç düzeni: 3'lü ızgara**
+  - Üçlü ızgara: üstte küçük gri etiket, altta büyük kalın sayı.
+- **Dönem seçici: Filtre içinde**
+  - Tarih aralığı diğer filtrelerle birlikte.
+- **Tablolu sayfa: Sekmeli liste**
+  - Durum sekmeleri (Bekleyen · Onaylı · Kapalı) tablonun üstünde.
+- **Dashboard: Sayaç + büyük grafik**
+  - Üstte sayaç şeridi, altında tek büyük grafik.
+- **Veri girişi: Ortada pencere**
+  - Ortada küçük pencere. 3-4 alanlık kısa formlar için.
+- **Ayarlar: Arama + gruplu**
+  - Tepede ayar araması, altında gruplu liste.
+- **Detay ekranı: Katlanır bölümler**
+  - Bölümler kapalı gelir, dokununca açılır.
+- **Ana eylem yeri: Alt çubukta orta**
+  - Alt sekme şeridinin ortasında yükseltilmiş düğme.
+- **Arama: Simgeden açılan**
+  - Büyüteç simgesi; dokununca arama çubuğu açılır.
+- **Filtre: Açılır panel**
+  - Filtre düğmesi; basınca üstten panel iner.
+- **İçe aktarma: Önizlemeli**
+  - Yüklemeden önce "N yeni · M mevcut" özeti ve satır listesi gösterilir.
+- **Genişlik: Ortada sınırlı**
+  - En fazla 1200px, ortalanır. Uzun satırlar okunaklı kalır.
+
+### Biçim
+
+- **Kart: Yükseltilmiş**
+  - Yumuşak gölge ve üstte ince ışık çizgisi; kart zeminden kalkık durur.
+- **Karta ekle: Şerit vurgu + Dokulu**
+  - Şerit vurgu: Sol kenarda 3px vurgu renginde dikey şerit.
+  - Dokulu: Dolgunun üzerinde çok ince gren dokusu; matbaa kağıdı hissi.
+  - Bu seçenekler birleşerek uygulanır, biri diğerini iptal etmez.
+- **Vurgu kartı: Degrade hero**
+  - Vurgu renginden koyusuna 135° degrade, büyük köşe, yumuşak renkli gölge.
+- **Köşe: Hafif**
+  - `border-radius` 6px. Nötr, güvenli seçim.
+- **Yoğunluk: Sıkışık**
+  - Satır 34px, kart içi boşluk 10px. Çok kayıtlı ekranlar için.
+- **Tablo satırı: Yatay çizgi**
+  - Her satırın altında 1px çizgi; dikey çizgi yok.
+- **Tabloya ekle: Vurgulu sütun**
+  - İlk sütun kalın yazılır ve yatay kaydırmada yapışık kalır.
+- **Tablo · telefonda: İki satır**
+  - Her kayıt iki satır: üstte ana bilgi kalın, altta detaylar küçük ve silik.
+- **Düğme: Degrade**
+  - Dolgu vurgu renginden koyusuna 135° geçiş.
+- **Düğmeye ekle: İkonlu**
+  - Her düğmede solda 16px simge, sağında yazı; arada 8px boşluk.
+- **Simge: İki katman**
+  - Kontur + arkada aynı rengin saydam dolgusu.
+
+### Açılış
+
+- **Açılış ekranı: Logo + yüzde + mesaj**
+  - Çubuk, yüzde ve "Veriler alınıyor…" gibi durum yazısı.
+- **Giriş ekranı: Ortada kart**
+  - Ortada tek kart: logo, e-posta, şifre, giriş düğmesi.
+
+### Durumlar
+
+- **Boş durum: Simge + yazı + düğme**
+  - Simge, ne yapılacağını anlatan cümle ve ilk kaydı ekleyen düğme.
+- **Yükleme: İlerleme çubuğu**
+  - Üstte ince çubuk; içerik yerinde kalır.
+- **Hata ekranı: Simge + tekrar dene**
+  - Uyarı simgesi, ne olduğunu anlatan cümle ve "Tekrar dene" düğmesi.
+- **İşlem sonucu: Tik animasyonu**
+  - Ortada büyüyen onay işareti, sonra ekran kapanır.
+- **Bildirim: Sağ üstte**
+  - Sağ üst köşede yığılan kartlar. Masaüstü alışkanlığı.
+- **Onay & silme: Pencere ile onay**
+  - "Emin misin?" penceresi; silmeden önce durdurur.
+- **Liste sonu: Sonsuz kaydırma**
+  - Aşağı indikçe kendiliğinden yüklenir.
+
+### Hareket
+
+- **Sayfa geçişi: Soluk**
+  - Yeni sayfa 160ms içinde belirir.
+- **Dokunma tepkisi: Hafif küçülme**
+  - Basılan öğe %98,5 küçülür, bırakınca geri döner. En sessiz tepki.
+- **Seçim vurgusu: Ötekiler soluklaşır**
+  - Seçili olmayanlar %55 saydamlığa iner; odak seçilene toplanır.
+- **Açılma ve kapanma: Soluk + kayma**
+  - Hem belirir hem 8px kayar. En yumuşak olanı.
+- **Bekleme göstergesi: Yazı değişir**
+  - "Kaydet" → "Kaydediliyor…" olur; düğme pasifleşir.
+- **Liste girişi: Sırayla belirme**
+  - Satırlar 40ms arayla tek tek belirir.
+- **Sayı değişimi: Kısa parlama**
+  - Değişen sayı bir an vurgu renginde parlar.
+- **Hareket miktarı: Bol**
+  - Sayı sayma, parlama ve yaylanma dahil. Gösterişli ama yorabilir.
+
+### Sistem
+
+- **Güncelleme: Güncelle düğmesi**
+  - Ayarlarda "Uygulamayı güncelle" düğmesi ve altında sürüm etiketi.
+- **Yedek ve kayıt geçmişi: Yedek + değişiklik kaydı**
+  - Ayrıca kimin neyi ne zaman değiştirdiğini gösteren liste.
 
 ## Modüller ve sayfalar
 
