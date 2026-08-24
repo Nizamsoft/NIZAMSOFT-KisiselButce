@@ -9,7 +9,8 @@
 import { simge } from './simge.js';
 import { kacir, sadelestir } from './veri/bicim.js';
 
-const SAYFA_BOYU = 50;   // sonsuz kaydırmada bir seferde eklenen satır
+const SAYFA_BOYU = 50;    // sonsuz kaydırmada bir seferde eklenen satır
+const ARAMA_BEKLE = 140;  // her tuşta değil, yazma durunca süz
 
 /**
  * @param {HTMLElement} kap
@@ -57,10 +58,16 @@ export function liste(kap, ayar) {
     if (durum.aramaAcik) aramaGiris.focus();
     else { aramaGiris.value = ''; durum.arama = ''; ciz(); }
   });
+  /* Her tuş vuruşunda bütün listeyi yeniden çizmek binlerce kayıtta
+     takılmaya yol açar; yazma durduktan kısa süre sonra süzülür. */
+  let aramaZaman = null;
   aramaGiris.addEventListener('input', () => {
-    durum.arama = aramaGiris.value;
-    durum.gosterilen = SAYFA_BOYU;
-    ciz();
+    clearTimeout(aramaZaman);
+    aramaZaman = setTimeout(() => {
+      durum.arama = aramaGiris.value;
+      durum.gosterilen = SAYFA_BOYU;
+      ciz();
+    }, ARAMA_BEKLE);
   });
 
   /* ---- filtre: üstten inen panel ---- */
@@ -144,8 +151,11 @@ export function liste(kap, ayar) {
 
     if (ayar.satirTikla) {
       govde.querySelectorAll('[data-kayit]').forEach(oge => {
-        oge.addEventListener('click', () => {
-          ayar.satirTikla(gorunen.find(k => k.id === oge.dataset.kayit));
+        const ac = () => ayar.satirTikla(gorunen.find(k => k.id === oge.dataset.kayit));
+        oge.addEventListener('click', ac);
+        /* Klavyeyle gezenler için: Enter ve Boşluk da açsın. */
+        oge.addEventListener('keydown', olay => {
+          if (olay.key === 'Enter' || olay.key === ' ') { olay.preventDefault(); ac(); }
         });
       });
     }
@@ -169,7 +179,8 @@ export function liste(kap, ayar) {
   }
 
   function satirHtml(kayit, sutunlar) {
-    return `<tr data-kayit="${kacir(kayit.id)}" ${ayar.satirTikla ? 'tabindex="0"' : ''}>
+    return `<tr data-kayit="${kacir(kayit.id)}" ${
+      ayar.satirTikla ? 'tabindex="0" role="button"' : ''}>
       ${sutunlar.map((s, i) => `
         <td class="${i === 0 ? 'ilk-sutun' : ''} ${s.hizala === 'sag' ? 'sag' : ''}">${hucre(kayit, s)}</td>`).join('')}
     </tr>`;
@@ -180,7 +191,8 @@ export function liste(kap, ayar) {
     const ust = sutunlar.filter(s => s.telefonda === 'ust' || (!s.telefonda && sutunlar.indexOf(s) === 0));
     const sag = sutunlar.find(s => s.telefonda === 'sag');
     const alt = sutunlar.filter(s => s.telefonda === 'alt');
-    return `<li class="kart-satir" data-kayit="${kacir(kayit.id)}" ${ayar.satirTikla ? 'tabindex="0"' : ''}>
+    return `<li class="kart-satir" data-kayit="${kacir(kayit.id)}" ${
+      ayar.satirTikla ? 'tabindex="0" role="button"' : ''}>
       <div class="kart-satir-govde">
         <div class="kart-satir-ust">${ust.map(s => hucre(kayit, s)).join(' ')}</div>
         <div class="kart-satir-alt">${alt.map(s => hucre(kayit, s)).filter(Boolean).join(' · ')}</div>

@@ -1,0 +1,195 @@
+/* Nizam Soft · Kişisel Bütçe — hareket
+ *
+ * Kararlar: sayfa geçişi soluk (160ms) · dokunma tepkisi %98,5 küçülme ·
+ * açılma-kapanma soluk + 8px kayma · liste girişi 40ms arayla sırayla belirme ·
+ * sayı değişiminde kısa parlama · seçim vurgusunda ötekiler %55 saydamlığa iner.
+ * Hareket miktarı "bol": sayı sayma, parlama ve yaylanma dahil.
+ *
+ * Sistemde "hareketi azalt" açıksa hepsi kapanır (en altta).
+ */
+
+/* ---------------------------------------------------------- sayfa geçişi */
+#sayfa-govdesi {
+  animation: sayfa-belir var(--gecis-sure) ease-out both;
+}
+@keyframes sayfa-belir {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ------------------------------------------------------- dokunma tepkisi */
+/* Basılan öğe %98,5 küçülür, bırakınca geri döner. En sessiz tepki. */
+.dugme,
+.dugme-simge-tek,
+.alt-sekme,
+.alt-ekle,
+.yan-sekme,
+.sekme,
+.cip,
+.kart-satir,
+.liste-satir,
+.sayac,
+.uyari-kart,
+.bolum-baslik,
+.ekle-menu button {
+  transition: transform 90ms ease-out, background-color 120ms ease-out, color 120ms ease-out;
+}
+.dugme:active,
+.dugme-simge-tek:active,
+.alt-sekme:active,
+.alt-ekle:active,
+.yan-sekme:active,
+.sekme:active,
+.cip:active,
+.kart-satir:active,
+.liste-satir:active,
+.sayac:active,
+.uyari-kart:active,
+.bolum-baslik:active,
+.ekle-menu button:active {
+  transform: scale(var(--basma-olcek));
+}
+.dugme[disabled]:active,
+.liste-satir[disabled]:active { transform: none; }
+
+/* ------------------------------------------------- açılma ve kapanma */
+/* Hem belirir hem 8px kayar. */
+.pencere,
+.ekle-menu,
+.tik-kart,
+.bildirim,
+.liste-filtre:not(.gizli),
+.liste-arama:not(.gizli) {
+  animation: ac-kay 200ms cubic-bezier(.2, .9, .3, 1) both;
+}
+@keyframes ac-kay {
+  from { opacity: 0; transform: translateY(calc(var(--kayma-mesafe) * -1)); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Ortada duran pencere kendi ortalamasını korumalı. */
+.pencere { animation-name: pencere-ac; }
+@keyframes pencere-ac {
+  from { opacity: 0; transform: translate(-50%, calc(-50% - var(--kayma-mesafe))); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+.ekle-menu { animation-name: menu-ac; }
+@keyframes menu-ac {
+  from { opacity: 0; transform: translateX(-50%) translateY(var(--kayma-mesafe)); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.pencere-perde, .ekle-perde, .tik-perde {
+  animation: perde-belir 160ms ease-out both;
+}
+@keyframes perde-belir { from { opacity: 0; } to { opacity: 1; } }
+
+/* Yaylanma: onay penceresi ve tik kartı hafifçe kurulup yerine oturur. */
+.tik-kart { animation: tik-yaylan 340ms cubic-bezier(.2, 1.5, .4, 1) both; }
+@keyframes tik-yaylan {
+  from { opacity: 0; transform: scale(.86); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Ağaç açılırken altları belirip kayar.
+   fill-mode "backwards": animasyon bitince öğe kendi normal biçimine döner.
+   "both" olsaydı son karedeki opacity:1 kalıcı olur ve seçim vurgusundaki
+   soluklaştırmayı ezerdi. */
+.agac-alt.acik > li,
+.agac-alt.acik > .kart-satir {
+  animation: ac-kay 180ms ease-out backwards;
+}
+
+/* ------------------------------------------------------- liste girişi */
+/* Satırlar 40ms arayla tek tek belirir. İlk 12 satır için; gerisi
+   kaydırınca zaten görünür, hepsine gecikme vermek listeyi yavaş gösterir. */
+.kart-liste > .kart-satir,
+.kart-liste > li,
+.tablo tbody tr {
+  /* backwards: bitince öğe kendi biçimine döner (bkz. yukarıdaki not). */
+  animation: satir-belir 220ms ease-out backwards;
+}
+@keyframes satir-belir {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.kart-liste > *:nth-child(1),  .tablo tbody tr:nth-child(1)  { animation-delay: 0ms; }
+.kart-liste > *:nth-child(2),  .tablo tbody tr:nth-child(2)  { animation-delay: 40ms; }
+.kart-liste > *:nth-child(3),  .tablo tbody tr:nth-child(3)  { animation-delay: 80ms; }
+.kart-liste > *:nth-child(4),  .tablo tbody tr:nth-child(4)  { animation-delay: 120ms; }
+.kart-liste > *:nth-child(5),  .tablo tbody tr:nth-child(5)  { animation-delay: 160ms; }
+.kart-liste > *:nth-child(6),  .tablo tbody tr:nth-child(6)  { animation-delay: 200ms; }
+.kart-liste > *:nth-child(7),  .tablo tbody tr:nth-child(7)  { animation-delay: 240ms; }
+.kart-liste > *:nth-child(8),  .tablo tbody tr:nth-child(8)  { animation-delay: 280ms; }
+.kart-liste > *:nth-child(9),  .tablo tbody tr:nth-child(9)  { animation-delay: 320ms; }
+.kart-liste > *:nth-child(10), .tablo tbody tr:nth-child(10) { animation-delay: 360ms; }
+.kart-liste > *:nth-child(11), .tablo tbody tr:nth-child(11) { animation-delay: 400ms; }
+.kart-liste > *:nth-child(n+12), .tablo tbody tr:nth-child(n+12) { animation-delay: 440ms; }
+/* Ağacın içindeki satırlar kendi animasyonunu kullanır, sıra beklemez. */
+.agac-alt > li, .agac-alt > .kart-satir { animation-delay: 0ms !important; }
+
+/* --------------------------------------------------------- sayı değişimi */
+/* Değişen sayı bir an vurgu renginde parlar. */
+.parla { animation: sayi-parla 700ms ease-out; }
+@keyframes sayi-parla {
+  0%   { color: var(--vurgu); transform: scale(1.06); }
+  40%  { color: var(--vurgu); transform: scale(1.02); }
+  100% { color: inherit; transform: scale(1); }
+}
+
+/* -------------------------------------------------------- seçim vurgusu */
+/* Bir başlık açıkken ötekiler soluklaşır; odak seçilene toplanır. */
+.rapor-liste.secim-var .rapor-dal:not(.secili) { opacity: var(--soluk-saydamlik); }
+.rapor-liste .rapor-dal { transition: opacity 180ms ease-out; }
+
+/* ------------------------------------------------------ yeni sürüm şeridi */
+.surum-serit {
+  position: fixed;
+  z-index: 76;
+  left: 50%;
+  bottom: calc(var(--alt-cubuk-yukseklik) + var(--hap-bosluk) * 2 + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: calc(100% - var(--hap-bosluk) * 2);
+  max-width: 420px;
+  padding: 10px 12px;
+  background: var(--degrade-vurgu);
+  color: #ffffff;
+  border-radius: 12px;
+  box-shadow: var(--golge-vurgu);
+  font-size: 13px;
+  animation: ac-kay 220ms ease-out both;
+}
+.surum-serit .simge { flex: none; }
+.surum-serit span { flex: 1 1 auto; }
+.surum-serit button {
+  flex: none;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, .55);
+  border-radius: var(--kose);
+  background: rgba(255, 255, 255, .14);
+  color: #ffffff;
+  font-family: var(--yazi-metin);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.surum-serit button:active { background: rgba(255, 255, 255, .26); }
+@media (min-width: 900px) {
+  .surum-serit { bottom: var(--hap-bosluk); }
+}
+
+/* ------------------------------------------------- hareketi azalt ayarı */
+/* Kullanıcı sistemde hareketi azaltmayı açtıysa hiçbir şey oynamaz. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .dugme:active, .kart-satir:active, .liste-satir:active,
+  .sayac:active, .alt-sekme:active, .sekme:active { transform: none; }
+}

@@ -24,10 +24,14 @@ export function basliklaRaporSayfasi(yon) {
       kap.dataset.donem = donem;
       const r = await basliklaRapor(yon, donem);
 
+      /* Seçim vurgusu: bir başlık açıkken ötekiler soluklaşır, odak
+         seçilene toplanır. Hiçbiri açık değilse hepsi normal görünür. */
+      const secimVar = [...acik].some(a => !a.includes('/'));
+
       const satirlarHtml = r.satirlar.map(s => {
         const acikMi = acik.has(s.id);
         return `
-        <li class="rapor-dal">
+        <li class="rapor-dal ${acikMi ? 'secili' : ''}">
           <div class="kart-satir rapor-ana ${acikMi ? 'agac-acik' : ''} ${s.limitAsildi ? 'asildi' : ''}"
                data-ana="${kacir(s.id)}" tabindex="0" aria-expanded="${acikMi}">
             <span class="agac-ok">${simge('sagOk', 'simge-16')}</span>
@@ -73,7 +77,7 @@ export function basliklaRaporSayfasi(yon) {
       /* Giderler raporunda en altta ayrıca kredi kartı harcamaları satırı durur. */
       const kartAcik = acik.has('__kart__');
       const kartHtml = (!gelirMi && r.kartHarcamalari.length) ? `
-        <li class="rapor-dal kart-dal">
+        <li class="rapor-dal kart-dal ${kartAcik ? 'secili' : ''}">
           <div class="kart-satir rapor-ana ${kartAcik ? 'agac-acik' : ''}"
                data-ana="__kart__" tabindex="0" aria-expanded="${kartAcik}">
             <span class="agac-ok">${simge('sagOk', 'simge-16')}</span>
@@ -128,7 +132,7 @@ export function basliklaRaporSayfasi(yon) {
         </div>
 
         ${r.satirlar.length ? `
-          <ul class="kart-liste rapor-liste">${satirlarHtml}${kartHtml}</ul>` : `
+          <ul class="kart-liste rapor-liste ${secimVar ? 'secim-var' : ''}">${satirlarHtml}${kartHtml}</ul>` : `
           <div class="bos-durum">
             ${simge(gelirMi ? 'gelir' : 'gider', 'simge-40')}
             <h3>${gelirMi ? 'Gelir kaydı yok' : 'Gider kaydı yok'}</h3>
@@ -156,27 +160,21 @@ export function basliklaRaporSayfasi(yon) {
       });
 
       /* açılıp kapanma */
-      kap.querySelectorAll('[data-ana]').forEach(oge => {
-        oge.addEventListener('click', () => {
-          const id = oge.dataset.ana;
-          if (acik.has(id)) acik.delete(id); else acik.add(id);
-          cizRapor();
+      /* Hem dokunma hem klavye: Enter ve Boşluk da açar. */
+      function bagla(secici, islev) {
+        kap.querySelectorAll(secici).forEach(oge => {
+          oge.setAttribute('role', 'button');
+          const calistir = olay => { olay.stopPropagation(); islev(oge); };
+          oge.addEventListener('click', calistir);
+          oge.addEventListener('keydown', olay => {
+            if (olay.key === 'Enter' || olay.key === ' ') { olay.preventDefault(); calistir(olay); }
+          });
         });
-      });
-      kap.querySelectorAll('[data-alt]').forEach(oge => {
-        oge.addEventListener('click', olay => {
-          olay.stopPropagation();
-          const id = oge.dataset.alt;
-          if (acik.has(id)) acik.delete(id); else acik.add(id);
-          cizRapor();
-        });
-      });
-      kap.querySelectorAll('[data-hareket]').forEach(oge => {
-        oge.addEventListener('click', olay => {
-          olay.stopPropagation();
-          hareketDetay(oge.dataset.hareket, () => cozumle());
-        });
-      });
+      }
+      const cevir = (kume, id) => { if (kume.has(id)) kume.delete(id); else kume.add(id); cizRapor(); };
+      bagla('[data-ana]', oge => cevir(acik, oge.dataset.ana));
+      bagla('[data-alt]', oge => cevir(acik, oge.dataset.alt));
+      bagla('[data-hareket]', oge => hareketDetay(oge.dataset.hareket, () => cozumle()));
     }
 
     await cizRapor();

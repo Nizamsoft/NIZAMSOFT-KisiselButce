@@ -6,12 +6,14 @@ import { simge } from '../simge.js';
 import { git } from '../yonlendirici.js';
 import { paraSimgeli, para, ay, kacir } from '../veri/bicim.js';
 import { panelOzeti, gelecekAylar } from '../veri/hesap.js';
+import { sayarakYaz } from '../canli.js';
 
-function sayac(etiket, deger, rota, serit = '') {
+/* Değer, çizimden sonra sayarak yazılır (bkz. canli.js). */
+function sayac(etiket, anahtar, rota, serit = '') {
   return `
     <button class="kart kart-serit ${serit} sayac" type="button" data-rota="${rota}">
       <span class="sayac-etiket">${kacir(etiket)}</span>
-      <span class="sayac-deger">${kacir(deger)}</span>
+      <span class="sayac-deger" data-sayac="${anahtar}">0,00&nbsp;₺</span>
     </button>`;
 }
 
@@ -71,9 +73,9 @@ export default {
         </button>` : ''}
 
       <div class="sayac-izgara">
-        ${sayac('Bankadaki param', paraSimgeli(ozet.bankadakiParam), '/hesaplar?sekme=banka')}
-        ${sayac('Yatırımdaki param', paraSimgeli(ozet.yatirimdakiParam), '/hesaplar?sekme=yatirimlar')}
-        ${sayac('Bu ay kalan harcanabilir', paraSimgeli(ozet.buAyKalanHarcanabilir), '/raporlar/butce',
+        ${sayac('Bankadaki param', 'banka', '/hesaplar?sekme=banka')}
+        ${sayac('Yatırımdaki param', 'yatirim', '/hesaplar?sekme=yatirimlar')}
+        ${sayac('Bu ay kalan harcanabilir', 'kalan', '/raporlar/butce',
                 ozet.buAyKalanHarcanabilir < 0 ? 'tehlike' : '')}
       </div>
 
@@ -99,6 +101,16 @@ export default {
 
     kap.querySelectorAll('[data-rota]').forEach(oge => {
       oge.addEventListener('click', () => git(oge.dataset.rota));
+    });
+
+    /* Sayaçlar sayarak yükselir; değer bir öncekinden farklıysa parlar. */
+    const degerler = {
+      banka: ozet.bankadakiParam,
+      yatirim: ozet.yatirimdakiParam,
+      kalan: ozet.buAyKalanHarcanabilir,
+    };
+    kap.querySelectorAll('[data-sayac]').forEach(oge => {
+      sayarakYaz(oge, degerler[oge.dataset.sayac], 'panel:' + oge.dataset.sayac);
     });
   },
 };

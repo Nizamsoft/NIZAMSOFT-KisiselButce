@@ -347,6 +347,11 @@ Künyede karşılığı olmayıp uygulama sırasında kullanıcıya sorulan nokt
 - **Yedek dosyası şifresizdir.** Cihazdaki veri PIN'le şifreli durur ama dışa
   aktarılan JSON düz metindir — başka bir yerde okunabilsin diye. Ayarlar
   ekranında kullanıcıya dosyayı güvenli tutması söylenir.
+- **Yeni sürüm kullanıcı onayıyla devralır.** Servis işçisi yeni sürümü bulunca
+  beklemeye alınır ve ekranda şerit çıkar; kullanıcı "Şimdi güncelle" demeden
+  devralmaz. Sebep: ekstre sihirbazı gibi yarım kalmış bir iş bölünmesin.
+- **Hareket, sistem ayarına saygı duyar.** Kullanıcı cihazında "hareketi azalt"
+  açıksa bütün animasyonlar ve sayaç sayması kapanır, sayılar doğrudan yazılır.
 - **Paketler `vendor/js/` altında ve geç yüklenir.** xlsx ve pdfmake toplam
   3 MB; açılışta değil, ilk gerektiğinde indirilir. Servis işçisi ilk
   kullanımdan sonra önbelleğe alır, sonrası çevrimdışı çalışır.

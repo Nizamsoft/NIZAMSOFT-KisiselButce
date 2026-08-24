@@ -7,7 +7,7 @@
  * şifreli durur. Burada yalnız uygulamanın kendisi (kabuk) tutulur.
  */
 
-const SURUM = '2026.5';
+const SURUM = '2026.6';
 const ONBELLEK = 'nizam-butce-' + SURUM;
 
 const KABUK = [
@@ -28,6 +28,7 @@ const KABUK = [
   './css/pencere.css',
   './css/sihirbaz.css',
   './css/rapor.css',
+  './css/hareket.css',
   './js/app.js',
   './js/kabuk.js',
   './js/giris.js',
@@ -40,6 +41,9 @@ const KABUK = [
   './js/pencere.js',
   './js/kayitlar.js',
   './js/vendor.js',
+  './js/canli.js',
+  './js/erisim.js',
+  './js/guncelleme.js',
   './js/yedek.js',
   './js/cikti.js',
   './js/veri/rapor.js',
@@ -73,11 +77,16 @@ const KABUK = [
 ];
 
 self.addEventListener('install', olay => {
+  /* skipWaiting BURADA çağrılmaz: kullanıcı ekranda bir işin ortasında
+     olabilir (ekstre sihirbazı gibi). Yeni sürüm beklemeye alınır, uygulama
+     şerit gösterir ve kullanıcı "Şimdi güncelle" deyince devralır. */
   olay.waitUntil(
-    caches.open(ONBELLEK)
-      .then(onbellek => onbellek.addAll(KABUK))
-      .then(() => self.skipWaiting())
+    caches.open(ONBELLEK).then(onbellek => onbellek.addAll(KABUK))
   );
+});
+
+self.addEventListener('message', olay => {
+  if (olay.data && olay.data.tur === 'hemen-devral') self.skipWaiting();
 });
 
 self.addEventListener('activate', olay => {

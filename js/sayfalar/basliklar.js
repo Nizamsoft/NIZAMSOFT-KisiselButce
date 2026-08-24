@@ -39,7 +39,11 @@ export function basliklarSayfasi(tablo, limitli) {
 
     const govde = kap.querySelector('#baslik-govde');
     const aramaGiris = kap.querySelector('#baslik-arama');
-    aramaGiris.addEventListener('input', () => { arama = aramaGiris.value; cizAgac(); });
+    let aramaZaman = null;
+    aramaGiris.addEventListener('input', () => {
+      clearTimeout(aramaZaman);
+      aramaZaman = setTimeout(() => { arama = aramaGiris.value; cizAgac(); }, 140);
+    });
 
     function cizAgac() {
       const q = sadelestir(arama);
@@ -110,10 +114,15 @@ export function basliklarSayfasi(tablo, limitli) {
         </ul>`;
 
       govde.querySelectorAll('[data-ana]').forEach(oge => {
-        oge.addEventListener('click', () => {
+        const ac = () => {
           const id = oge.dataset.ana;
           if (acik.has(id)) acik.delete(id); else acik.add(id);
           cizAgac();
+        };
+        oge.setAttribute('role', 'button');
+        oge.addEventListener('click', ac);
+        oge.addEventListener('keydown', olay => {
+          if (olay.key === 'Enter' || olay.key === ' ') { olay.preventDefault(); ac(); }
         });
       });
       govde.querySelectorAll('[data-duzenle]').forEach(oge => {

@@ -11,6 +11,7 @@ import { pencereAc, onayla, bildir, tikGoster } from '../pencere.js';
 import { yedegiIndir, yedegiOku, yedegiGeriYukle, ayarOku, kullanilanAlan, boyutYaz } from '../yedek.js';
 import { PIN_UZUNLUK, KURTARMA_SORUSU, ac as kilidiAc, pinDegistir, kurtarmaCevabiDegistir }
   from '../kilit.js';
+import { zorlaGuncelle } from '../guncelleme.js';
 import { tarihSaat, sadelestir, kacir } from '../veri/bicim.js';
 
 /* ------------------------------------------------------------- güvenlik */
@@ -155,16 +156,7 @@ async function uygulamayiGuncelle() {
     yazi: 'En yeni sürüm indirilip uygulama yeniden başlatılacak. Verilerine dokunulmaz.',
     onayla: 'Evet, güncelle',
   });
-  if (!evet) return;
-  try {
-    const kayit = await navigator.serviceWorker?.getRegistration();
-    if (kayit) { await kayit.update(); await kayit.unregister(); }
-    if (window.caches) {
-      const adlar = await caches.keys();
-      await Promise.all(adlar.map(a => caches.delete(a)));
-    }
-  } catch { /* önbellek temizlenemese de yeniden yükleme yeni sürümü getirir */ }
-  location.reload();
+  if (evet) await zorlaGuncelle();
 }
 
 /* ---------------------------------------------------------------- sayfa */
@@ -277,6 +269,10 @@ export default {
     }
 
     cizGruplar();
-    arama.addEventListener('input', () => cizGruplar(arama.value));
+    let aramaZaman = null;
+    arama.addEventListener('input', () => {
+      clearTimeout(aramaZaman);
+      aramaZaman = setTimeout(() => cizGruplar(arama.value), 140);
+    });
   },
 };

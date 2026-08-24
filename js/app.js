@@ -6,6 +6,8 @@ import { tanimla, dinle, cozumle, git } from './yonlendirici.js';
 import { cizKabuk, kabuguGuncelle } from './kabuk.js';
 import { acilisGoster, girisiAc } from './giris.js';
 import { hazirVeriYukle } from './veri/hazir.js';
+import { guncellemeyiIzle } from './guncelleme.js';
+import { duyur } from './erisim.js';
 import { SURUM } from './surum.js';
 
 async function baslat() {
@@ -40,6 +42,10 @@ async function baslat() {
     });
     govde.innerHTML = '';
     window.scrollTo(0, 0);
+    /* Klavye ve ekran okuyucu kullananlar için: odak yeni sayfanın başına
+       döner ve sayfa adı duyurulur. */
+    govde.focus({ preventScroll: true });
+    duyur(kayit.sayfa.baslik);
     try {
       await kayit.sayfa.ciz(govde, parametre, sorgu);
     } catch (hata) {
@@ -57,15 +63,10 @@ async function baslat() {
   else cozumle();
 }
 
-/* Servis işçisi: kabuğu önbelleğe alır, sürüm değişince günceller.
-   Yol GÖRELİ — GitHub Pages projeyi alt klasörden yayınlıyor. */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {
-      /* Çevrimdışı önbellek kurulamadıysa uygulama yine de çalışır. */
-    });
-  });
-}
+/* Servis işçisi: kabuğu önbelleğe alır. Yeni sürüm çıkınca kullanıcıya şerit
+   gösterilir; onaylamadan devralmaz. Yol GÖRELİ — GitHub Pages projeyi alt
+   klasörden yayınlıyor. */
+window.addEventListener('load', guncellemeyiIzle);
 
 console.info('Nizam Soft · Kişisel Bütçe · Sürüm ' + SURUM);
 baslat();
